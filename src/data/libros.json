@@ -1,0 +1,22 @@
+[
+  {
+    "id": "mexico-viking",
+    "titulo": "Mexico Viking",
+    "subtitulo": "A Novel of Mexico's Environmental Struggle",
+    "autor": "Eric Gustafson",
+    "año": 2024,
+    "descripcion": "Mexico Viking follows Nils, a man born in Mexico with Scandinavian roots and a life shaped by two worlds. From Mexico's wetlands and arid deserts to Wyoming and Alaska, his journey unfolds through friendships, aviation, hunting adventures, and decades of memories.",
+    "disponible": true,
+    "agotado": false,
+    "amazon": {
+      "paperback": "https://www.amazon.com/dp/XXXXX",
+      "kindle": "https://www.amazon.com/dp/XXXXX",
+      "audiobook": null
+    },
+    "imagen": "/images/mexico-viking-cover.jpg",
+    "generos": ["Novela", "Aventura", "Conservación"],
+    "idiomas": ["Español", "Inglés"],
+    "paginas": 178,
+    "formato": ["Paperback", "Kindle"]
+  }
+]

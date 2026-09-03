@@ -1,0 +1,19 @@
+{
+  "name": "ericwgustafson-website",
+  "version": "1.0.0",
+  "description": "Sitio oficial de Eric Gustafson - Autor de Mexico Viking",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.4.0",
+    "@astrojs/cloudflare": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}
