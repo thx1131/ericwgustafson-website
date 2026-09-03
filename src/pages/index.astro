@@ -1,19 +1,116 @@
 ---
-// src/pages/index.astro
-// Página temporal — se reemplazará con el diseño definitivo
+import Layout from '../layouts/Layout.astro';
+import CardLibro from '../components/CardLibro.astro';
+import libros from '../data/libros.json';
+
+const libroDestacado = libros[0];
 ---
 
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eric Gustafson — Mexico Viking</title>
-  </head>
-  <body>
-    <main style="max-width: 700px; margin: 80px auto; padding: 0 24px; font-family: sans-serif; color: #2C3E50;">
-      <h1 style="color: #0B4F8C;">Eric Gustafson</h1>
-      <p>Sitio en construcción — Mexico Viking</p>
-      <p>Este es un placeholder para verificar que el deploy en Cloudflare Pages funciona correctamente.</p>
-    </main>
-  </body>
-</html>
+<Layout title="Eric Gustafson — Autor de Mexico Viking">
+  <section class="section hero">
+    <div class="container hero__inner">
+      <div class="hero__text">
+        <h1>Eric Gustafson</h1>
+        <p class="hero__lead">
+          Autor de <strong>Mexico Viking</strong>, una novela sobre raíces escandinavas y
+          mexicanas, aventura y la lucha por la conservación ambiental.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn-primary" href="/publicaciones">Ver publicaciones</a>
+          <a class="btn btn-secondary" href="/bio">Conocer al autor</a>
+        </div>
+      </div>
+      {
+        libroDestacado?.imagen && (
+          <div class="hero__cover">
+            <img src={libroDestacado.imagen} alt={`Portada de ${libroDestacado.titulo}`} />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    libroDestacado && (
+      <section class="section section--muted">
+        <div class="container">
+          <div class="section-heading section-heading--underline">
+            <h2>Sobre el libro</h2>
+          </div>
+          <div class="book-highlight">
+            <p>{libroDestacado.descripcion}</p>
+            <a class="btn btn-secondary" href="/publicaciones">
+              Más detalles
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    libroDestacado && (
+      <section class="section">
+        <div class="container">
+          <div class="section-heading">
+            <h2>Última publicación</h2>
+          </div>
+          <div class="latest-book">
+            <CardLibro libro={libroDestacado} />
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Layout>
+
+<style>
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero__inner {
+      grid-template-columns: 3fr 2fr;
+    }
+  }
+
+  .hero__lead {
+    font-size: 1.15rem;
+    color: var(--color-text-muted);
+    max-width: 46ch;
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: var(--space-lg);
+  }
+
+  .hero__cover {
+    background: var(--color-bg-muted);
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 2 / 3;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .hero__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .book-highlight {
+    max-width: 70ch;
+  }
+
+  .latest-book {
+    max-width: 360px;
+  }
+</style>

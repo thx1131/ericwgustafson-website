@@ -1,0 +1,112 @@
+---
+import { site, contacto, redes } from '../data/site.js';
+
+const year = new Date().getFullYear();
+const socialLinks = [
+  { href: redes.twitter, label: 'Twitter / X' },
+  { href: redes.instagram, label: 'Instagram' },
+  { href: redes.linkedin, label: 'LinkedIn' },
+].filter((s) => s.href);
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__block">
+      <p class="footer__name">{site.autor}</p>
+      <p class="footer__muted">{site.tituloLibro}</p>
+    </div>
+
+    <div class="footer__block">
+      <p class="footer__heading">Contacto</p>
+      <a class="footer__link" href={`mailto:${contacto.email}`}>{contacto.email}</a>
+      {
+        contacto.whatsappUrl && (
+          <a class="footer__link" href={contacto.whatsappUrl} target="_blank" rel="noopener noreferrer">
+            WhatsApp
+          </a>
+        )
+      }
+    </div>
+
+    {
+      socialLinks.length > 0 && (
+        <div class="footer__block">
+          <p class="footer__heading">Redes</p>
+          {socialLinks.map((s) => (
+            <a class="footer__link" href={s.href} target="_blank" rel="noopener noreferrer">
+              {s.label}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+
+  <div class="container">
+    <p class="footer__copy">© {year} {site.autor}. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-blue-deep);
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: var(--space-3xl);
+    padding: var(--space-2xl) 0 var(--space-lg);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: var(--space-lg);
+  }
+
+  .footer__block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    min-width: 160px;
+  }
+
+  .footer__name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+  }
+
+  .footer__muted {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.9rem;
+  }
+
+  .footer__heading {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-gold-light);
+    margin: 0 0 var(--space-xs);
+  }
+
+  .footer__link {
+    color: rgba(255, 255, 255, 0.85);
+    border-bottom: 2px solid transparent;
+    font-size: 0.95rem;
+  }
+
+  .footer__link:hover {
+    border-bottom-color: var(--color-gold);
+  }
+
+  .footer__copy {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.55);
+  }
+</style>

@@ -1,0 +1,55 @@
+---
+import { navLinks } from '../data/site.js';
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href) {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<nav class="nav">
+  <ul class="nav__list">
+    {
+      navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="nav__link"
+            aria-current={isActive(link.href) ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .nav__list {
+    list-style: none;
+    display: flex;
+    gap: var(--space-lg);
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav__link {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-white);
+    border-bottom: 2px solid transparent;
+    padding-bottom: 2px;
+  }
+
+  .nav__link:hover {
+    border-bottom-color: var(--color-gold);
+  }
+
+  .nav__link[aria-current='page'] {
+    border-bottom-color: var(--color-gold);
+  }
+</style>

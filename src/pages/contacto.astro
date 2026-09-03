@@ -1,0 +1,99 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { contacto } from '../data/site.js';
+---
+
+<Layout
+  title="Contacto — Eric Gustafson"
+  description="Contacta a Eric Gustafson por correo o WhatsApp."
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-heading section-heading--underline">
+        <h1>Contacto</h1>
+        <p class="section-lead">
+          Para consultas de prensa, colaboraciones o comentarios sobre <em>Mexico Viking</em>,
+          escribe directamente.
+        </p>
+      </div>
+
+      <div class="contact-grid">
+        <a class="card contact-card" href={`mailto:${contacto.email}`}>
+          <span class="contact-card__label">Correo</span>
+          <span class="contact-card__value">{contacto.email}</span>
+        </a>
+
+        {
+          contacto.whatsappUrl ? (
+            <a
+              class="card contact-card"
+              href={contacto.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="contact-card__label">WhatsApp</span>
+              <span class="contact-card__value">Enviar mensaje</span>
+            </a>
+          ) : (
+            <div class="card contact-card contact-card--disabled">
+              <span class="contact-card__label">WhatsApp</span>
+              <span class="contact-card__value">Próximamente</span>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .section-lead {
+    color: var(--color-text-muted);
+    max-width: 60ch;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    max-width: 640px;
+  }
+
+  @media (min-width: 640px) {
+    .contact-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .contact-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .contact-card:hover {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .contact-card--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .contact-card__label {
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .contact-card__value {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-blue-deep);
+  }
+</style>

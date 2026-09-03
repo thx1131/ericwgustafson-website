@@ -1,0 +1,58 @@
+---
+import Nav from './Nav.astro';
+import { site } from '../data/site.js';
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a href="/" class="header__brand">
+      <span class="header__name">{site.autor}</span>
+      <span class="header__tag">{site.tituloLibro}</span>
+    </a>
+    <Nav />
+  </div>
+</header>
+
+<style>
+  .header {
+    background: var(--color-blue-deep);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-md);
+  }
+
+  .header__brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    border-bottom: none;
+  }
+
+  .header__brand:hover {
+    border-bottom: none;
+  }
+
+  .header__name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--color-white);
+    letter-spacing: -0.01em;
+  }
+
+  .header__tag {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-gold-light);
+  }
+</style>

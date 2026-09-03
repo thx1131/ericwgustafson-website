@@ -1,0 +1,77 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<!--
+  Texto de marcador de posición: reemplazar con la biografía real de Eric Gustafson.
+  Foto de marcador de posición: agregar el archivo definitivo en public/images/eric-gustafson.jpg
+-->
+<Layout title="Biografía — Eric Gustafson" description="Biografía de Eric Gustafson, autor de Mexico Viking.">
+  <section class="section">
+    <div class="container bio">
+      <div class="bio__photo">
+        <img src="/images/eric-gustafson.jpg" alt="Retrato de Eric Gustafson" />
+      </div>
+
+      <div class="bio__text">
+        <div class="section-heading section-heading--underline">
+          <h1>Biografía</h1>
+        </div>
+
+        <p>
+          Eric Gustafson es escritor y autor de <strong>Mexico Viking</strong>, una novela que
+          entrelaza raíces escandinavas y mexicanas a través de la historia de Nils, un
+          personaje formado por dos mundos. Su escritura nace de una fascinación de toda la
+          vida por los paisajes que moldean a las personas: los humedales y desiertos de
+          México, las montañas de Wyoming y la vastedad de Alaska.
+        </p>
+        <p>
+          Con formación e intereses que abarcan la aviación, la caza y la conservación
+          ambiental, Eric aporta a sus historias una perspectiva construida sobre experiencia
+          directa más que sobre investigación de escritorio. Su trabajo explora cómo la
+          identidad se forma en la frontera entre culturas, y cómo la relación de una persona
+          con la tierra puede definir el rumbo de toda una vida.
+        </p>
+        <p>
+          <em>Mexico Viking</em> es el resultado de años observando estas intersecciones:
+          entre el norte y el sur, entre la tradición y el cambio, entre la aventura personal
+          y la responsabilidad hacia el entorno natural. Eric continúa escribiendo desde esa
+          misma curiosidad, con nuevos proyectos en desarrollo.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .bio {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+  }
+
+  @media (min-width: 768px) {
+    .bio {
+      grid-template-columns: 1fr 2fr;
+      align-items: start;
+    }
+  }
+
+  .bio__photo {
+    background: var(--color-bg-muted);
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    max-width: 340px;
+  }
+
+  .bio__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .bio__text p {
+    max-width: 68ch;
+  }
+</style>

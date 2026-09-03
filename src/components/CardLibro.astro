@@ -1,0 +1,108 @@
+---
+interface Props {
+  libro: {
+    id: string;
+    titulo: string;
+    subtitulo?: string;
+    descripcion: string;
+    disponible: boolean;
+    imagen?: string;
+    amazon?: { paperback?: string | null; kindle?: string | null; audiobook?: string | null };
+    generos?: string[];
+    año?: number;
+  };
+}
+
+const { libro } = Astro.props;
+const enlaceAmazon = libro.amazon?.paperback || libro.amazon?.kindle || libro.amazon?.audiobook;
+---
+
+<article class="card card-libro">
+  <div class="card-libro__cover">
+    <img src={libro.imagen} alt={`Portada de ${libro.titulo}`} loading="lazy" />
+  </div>
+
+  <div class="card-libro__body">
+    <span class={`badge ${libro.disponible ? 'badge--available' : 'badge--soldout'}`}>
+      {libro.disponible ? 'Disponible' : 'Agotado'}
+    </span>
+
+    <h3 class="card-libro__title">{libro.titulo}</h3>
+    {libro.subtitulo && <p class="card-libro__subtitle">{libro.subtitulo}</p>}
+
+    <p class="card-libro__desc">{libro.descripcion}</p>
+
+    {
+      libro.generos && libro.generos.length > 0 && (
+        <p class="card-libro__meta">{libro.generos.join(' · ')}{libro.año ? ` · ${libro.año}` : ''}</p>
+      )
+    }
+
+    {
+      libro.disponible && enlaceAmazon && (
+        <a class="btn btn-primary" href={enlaceAmazon} target="_blank" rel="noopener noreferrer">
+          Comprar en Amazon
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .card-libro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .card-libro__cover {
+    background: var(--color-bg-muted);
+    aspect-ratio: 2 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-libro__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .card-libro__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+  }
+
+  .card-libro__title {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--color-blue-deep);
+  }
+
+  .card-libro__subtitle {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .card-libro__desc {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  .card-libro__meta {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  .card-libro .btn {
+    align-self: flex-start;
+    margin-top: var(--space-sm);
+  }
+</style>

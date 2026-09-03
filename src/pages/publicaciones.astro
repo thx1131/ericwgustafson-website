@@ -1,0 +1,48 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CardLibro from '../components/CardLibro.astro';
+import libros from '../data/libros.json';
+---
+
+<Layout
+  title="Publicaciones — Eric Gustafson"
+  description="Libros publicados por Eric Gustafson, incluyendo Mexico Viking."
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-heading section-heading--underline">
+        <h1>Publicaciones</h1>
+        <p class="section-lead">Obras publicadas de Eric Gustafson.</p>
+      </div>
+
+      <div class="grid-libros">
+        {libros.map((libro) => <CardLibro libro={libro} />)}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .section-lead {
+    color: var(--color-text-muted);
+    max-width: 60ch;
+  }
+
+  .grid-libros {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  @media (min-width: 640px) {
+    .grid-libros {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid-libros {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
