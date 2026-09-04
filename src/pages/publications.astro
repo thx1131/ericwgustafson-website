@@ -4,7 +4,7 @@ import PublicationCard from '../components/PublicationCard.astro';
 import publications from '../data/publications.json';
 
 const books = publications.filter((p) => p.status === 'available');
-const writings = publications
+const others = publications
   .filter((p) => p.status !== 'available')
   .sort((a, b) => (b.year ?? -Infinity) - (a.year ?? -Infinity));
 ---
@@ -30,27 +30,9 @@ const writings = publications
   <section class="section section--muted">
     <div class="container">
       <h2 class="group-heading">Selected Writings &amp; Contributions</h2>
-      <ul class="writings-list">
-        {
-          writings.map((publication) => (
-            <li class="writings-item">
-              <p class="writings-item__title">
-                <em>{publication.title}</em> — {publication.publisher}
-                {publication.year ? `, ${publication.year}` : ''}.
-              </p>
-              <p class="writings-item__desc">{publication.description}</p>
-              {publication.status === 'inquire' && (
-                <a class="writings-item__link" href="/contact">
-                  → Inquire
-                </a>
-              )}
-              {publication.status === 'out_of_print' && (
-                <span class="writings-item__note">Out of print</span>
-              )}
-            </li>
-          ))
-        }
-      </ul>
+      <div class="grid-others">
+        {others.map((publication) => <PublicationCard publication={publication} compact />)}
+      </div>
     </div>
   </section>
 </Layout>
@@ -78,46 +60,21 @@ const writings = publications
     }
   }
 
-  .writings-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-width: 70ch;
+  .grid-others {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg) var(--space-xl);
   }
 
-  .writings-item {
-    padding: var(--space-lg) 0;
-    border-top: 1px solid var(--color-border);
+  @media (min-width: 640px) {
+    .grid-others {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
-  .writings-item:last-child {
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .writings-item__title {
-    margin: 0 0 var(--space-xs);
-    font-family: var(--font-heading);
-    font-size: 1.1rem;
-    color: var(--color-text);
-  }
-
-  .writings-item__desc {
-    margin: 0 0 var(--space-xs);
-    color: var(--color-text-muted);
-    font-size: 0.95rem;
-  }
-
-  .writings-item__link {
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-
-  .writings-item__note {
-    display: inline-block;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-soldout);
+  @media (min-width: 1024px) {
+    .grid-others {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 </style>

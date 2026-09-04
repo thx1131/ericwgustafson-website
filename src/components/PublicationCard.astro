@@ -11,15 +11,16 @@ interface Props {
     genres?: string[];
     year?: number | null;
   };
+  compact?: boolean;
 }
 
-const { publication } = Astro.props;
+const { publication, compact = false } = Astro.props;
 const amazonLink =
   publication.amazon?.paperback || publication.amazon?.kindle || publication.amazon?.audiobook;
 
 const badgeText = {
   available: 'Available',
-  inquire: 'Inquire for availability',
+  inquire: 'Sold Out',
   out_of_print: 'Out of print',
 }[publication.status];
 
@@ -30,9 +31,15 @@ const badgeClass = {
 }[publication.status];
 ---
 
-<article class="publication-card">
+<article class={`publication-card ${compact ? 'publication-card--compact' : ''}`}>
   <div class="publication-card__cover">
-    <img src={publication.image} alt={`Cover of ${publication.title}`} loading="lazy" />
+    {
+      publication.image ? (
+        <img src={publication.image} alt={`Cover of ${publication.title}`} loading="lazy" />
+      ) : (
+        <span class="publication-card__cover-placeholder">Cover coming soon</span>
+      )
+    }
   </div>
 
   <div class="publication-card__body">
@@ -56,6 +63,14 @@ const badgeClass = {
       publication.status === 'available' && amazonLink && (
         <a class="btn btn-primary" href={amazonLink} target="_blank" rel="noopener noreferrer">
           Buy on Amazon
+        </a>
+      )
+    }
+
+    {
+      compact && publication.status === 'inquire' && (
+        <a class="publication-card__inquire" href="/contact">
+          Inquire about this title
         </a>
       )
     }
@@ -83,6 +98,17 @@ const badgeClass = {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .publication-card__cover-placeholder {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    text-align: center;
+    padding: 0 var(--space-sm);
   }
 
   .publication-card__body {
@@ -125,7 +151,27 @@ const badgeClass = {
     margin-top: var(--space-sm);
   }
 
+  .publication-card__inquire {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .publication-card__inquire:hover {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+  }
+
   .badge--inquire {
     color: var(--color-accent-soft);
+  }
+
+  /* Compact variant: smaller supporting cards for out-of-print / inquire titles */
+  .publication-card--compact .publication-card__title {
+    font-size: 1.1rem;
+  }
+
+  .publication-card--compact .publication-card__desc {
+    font-size: 0.9rem;
   }
 </style>

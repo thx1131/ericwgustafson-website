@@ -6,8 +6,11 @@ import { site } from '../data/site.js';
 <header class="header">
   <div class="container header__inner">
     <a href="/" class="header__brand">
-      <span class="header__name">{site.author}</span>
-      <span class="header__tag">{site.bookTitle}</span>
+      <img class="header__logo" src="/images/logo-eric-gustafson.png" alt="" />
+      <span class="header__brand-text">
+        <span class="header__name">{site.author}</span>
+        <span class="header__tag">{site.bookTitle}</span>
+      </span>
     </a>
     <Nav />
   </div>
@@ -31,13 +34,24 @@ import { site } from '../data/site.js';
 
   .header__brand {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
     line-height: 1.2;
     border-bottom: none;
   }
 
   .header__brand:hover {
     border-bottom: none;
+  }
+
+  .header__logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .header__brand-text {
+    display: flex;
+    flex-direction: column;
   }
 
   .header__name {
