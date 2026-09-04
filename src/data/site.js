@@ -26,6 +26,6 @@ export const redes = {
 export const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/bio', label: 'Biography' },
-  { href: '/publicaciones', label: 'Publications' },
-  { href: '/contacto', label: 'Contact' },
+  { href: '/publications', label: 'Publications' },
+  { href: '/contact', label: 'Contact' },
 ];

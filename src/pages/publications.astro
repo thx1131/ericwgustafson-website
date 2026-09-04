@@ -1,0 +1,123 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PublicationCard from '../components/PublicationCard.astro';
+import publications from '../data/publications.json';
+
+const books = publications.filter((p) => p.status === 'available');
+const writings = publications
+  .filter((p) => p.status !== 'available')
+  .sort((a, b) => (b.year ?? -Infinity) - (a.year ?? -Infinity));
+---
+
+<Layout
+  title="Publications — Eric Gustafson"
+  description="Books, writings, and conservation reports published by Eric Gustafson, including Mexico Viking."
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-heading section-heading--underline">
+        <h1>Publications</h1>
+        <p class="section-lead">Published works by Eric Gustafson.</p>
+      </div>
+
+      <h2 class="group-heading">Books</h2>
+      <div class="grid-books">
+        {books.map((publication) => <PublicationCard publication={publication} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--muted">
+    <div class="container">
+      <h2 class="group-heading">Selected Writings &amp; Contributions</h2>
+      <ul class="writings-list">
+        {
+          writings.map((publication) => (
+            <li class="writings-item">
+              <p class="writings-item__title">
+                <em>{publication.title}</em> — {publication.publisher}
+                {publication.year ? `, ${publication.year}` : ''}.
+              </p>
+              <p class="writings-item__desc">{publication.description}</p>
+              {publication.status === 'inquire' && (
+                <a class="writings-item__link" href="/contact">
+                  → Inquire
+                </a>
+              )}
+              {publication.status === 'out_of_print' && (
+                <span class="writings-item__note">Out of print</span>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .section-lead {
+    color: var(--color-text-muted);
+    max-width: 60ch;
+  }
+
+  .group-heading {
+    margin-bottom: var(--space-lg);
+  }
+
+  .grid-books {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-2xl);
+  }
+
+  @media (min-width: 640px) {
+    .grid-books {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .writings-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 70ch;
+  }
+
+  .writings-item {
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .writings-item:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .writings-item__title {
+    margin: 0 0 var(--space-xs);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--color-text);
+  }
+
+  .writings-item__desc {
+    margin: 0 0 var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+  }
+
+  .writings-item__link {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .writings-item__note {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-soldout);
+  }
+</style>

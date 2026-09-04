@@ -1,0 +1,131 @@
+---
+interface Props {
+  publication: {
+    id: string;
+    title: string;
+    subtitle?: string | null;
+    description: string;
+    status: 'available' | 'inquire' | 'out_of_print';
+    image?: string | null;
+    amazon?: { paperback?: string | null; kindle?: string | null; audiobook?: string | null } | null;
+    genres?: string[];
+    year?: number | null;
+  };
+}
+
+const { publication } = Astro.props;
+const amazonLink =
+  publication.amazon?.paperback || publication.amazon?.kindle || publication.amazon?.audiobook;
+
+const badgeText = {
+  available: 'Available',
+  inquire: 'Inquire for availability',
+  out_of_print: 'Out of print',
+}[publication.status];
+
+const badgeClass = {
+  available: 'badge--available',
+  inquire: 'badge--inquire',
+  out_of_print: 'badge--soldout',
+}[publication.status];
+---
+
+<article class="publication-card">
+  <div class="publication-card__cover">
+    <img src={publication.image} alt={`Cover of ${publication.title}`} loading="lazy" />
+  </div>
+
+  <div class="publication-card__body">
+    <span class={`badge ${badgeClass}`}>{badgeText}</span>
+
+    <h3 class="publication-card__title">{publication.title}</h3>
+    {publication.subtitle && <p class="publication-card__subtitle">{publication.subtitle}</p>}
+
+    <p class="publication-card__desc">{publication.description}</p>
+
+    {
+      publication.genres && publication.genres.length > 0 && (
+        <p class="publication-card__meta">
+          {publication.genres.join(' · ')}
+          {publication.year ? ` · ${publication.year}` : ''}
+        </p>
+      )
+    }
+
+    {
+      publication.status === 'available' && amazonLink && (
+        <a class="btn btn-primary" href={amazonLink} target="_blank" rel="noopener noreferrer">
+          Buy on Amazon
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .publication-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-lg);
+  }
+
+  .publication-card__cover {
+    background: var(--color-bg-muted);
+    aspect-ratio: 2 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .publication-card__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .publication-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: 0;
+  }
+
+  .publication-card__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--color-accent);
+  }
+
+  .publication-card__subtitle {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .publication-card__desc {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  .publication-card__meta {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .publication-card .btn {
+    align-self: flex-start;
+    margin-top: var(--space-sm);
+  }
+
+  .badge--inquire {
+    color: var(--color-accent-soft);
+  }
+</style>

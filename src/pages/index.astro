@@ -1,9 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import CardLibro from '../components/CardLibro.astro';
-import libros from '../data/libros.json';
+import PublicationCard from '../components/PublicationCard.astro';
+import publications from '../data/publications.json';
 
-const libroDestacado = libros[0];
+const featured = publications.find((p) => p.status === 'available');
 ---
 
 <Layout title="Eric Gustafson — Author of Mexico Viking">
@@ -16,14 +16,14 @@ const libroDestacado = libros[0];
           Mexican roots, adventure, and the fight for environmental conservation.
         </p>
         <div class="hero__actions">
-          <a class="btn btn-primary" href="/publicaciones">View Publications</a>
+          <a class="btn btn-primary" href="/publications">View Publications</a>
           <a class="btn btn-secondary" href="/bio">About the Author</a>
         </div>
       </div>
       {
-        libroDestacado?.imagen && (
+        featured?.image && (
           <div class="hero__cover">
-            <img src={libroDestacado.imagen} alt={`Cover of ${libroDestacado.titulo}`} />
+            <img src={featured.image} alt={`Cover of ${featured.title}`} />
           </div>
         )
       }
@@ -31,15 +31,15 @@ const libroDestacado = libros[0];
   </section>
 
   {
-    libroDestacado && (
+    featured && (
       <section class="section section--muted">
         <div class="container">
           <div class="section-heading section-heading--underline">
             <h2>About the Book</h2>
           </div>
           <div class="book-highlight">
-            <p>{libroDestacado.descripcion}</p>
-            <a class="btn btn-secondary" href="/publicaciones">
+            <p>{featured.description}</p>
+            <a class="btn btn-secondary" href="/publications">
               Read More
             </a>
           </div>
@@ -49,14 +49,14 @@ const libroDestacado = libros[0];
   }
 
   {
-    libroDestacado && (
+    featured && (
       <section class="section">
         <div class="container">
           <div class="section-heading">
             <h2>Latest Release</h2>
           </div>
           <div class="latest-book">
-            <CardLibro libro={libroDestacado} />
+            <PublicationCard publication={featured} />
           </div>
         </div>
       </section>
