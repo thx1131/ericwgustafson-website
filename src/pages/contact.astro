@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { contacto } from '../data/site.js';
+import { contact } from '../data/site.js';
 ---
 
 <Layout
@@ -18,16 +18,16 @@ import { contacto } from '../data/site.js';
       </div>
 
       <div class="contact-grid">
-        <a class="card contact-card" href={`mailto:${contacto.email}`}>
+        <a class="card contact-card" href={`mailto:${contact.email}`}>
           <span class="contact-card__label">Email</span>
-          <span class="contact-card__value">{contacto.email}</span>
+          <span class="contact-card__value">{contact.email}</span>
         </a>
 
         {
-          contacto.whatsappUrl ? (
+          contact.whatsappUrl ? (
             <a
               class="card contact-card"
-              href={contacto.whatsappUrl}
+              href={contact.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
             >

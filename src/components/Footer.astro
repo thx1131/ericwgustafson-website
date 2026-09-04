@@ -1,27 +1,27 @@
 ---
-import { site, contacto, redes } from '../data/site.js';
+import { site, contact, social } from '../data/site.js';
 
 const year = new Date().getFullYear();
 const socialLinks = [
-  { href: redes.twitter, label: 'Twitter / X' },
-  { href: redes.instagram, label: 'Instagram' },
-  { href: redes.linkedin, label: 'LinkedIn' },
+  { href: social.twitter, label: 'Twitter / X' },
+  { href: social.instagram, label: 'Instagram' },
+  { href: social.linkedin, label: 'LinkedIn' },
 ].filter((s) => s.href);
 ---
 
 <footer class="footer">
   <div class="container footer__inner">
     <div class="footer__block">
-      <p class="footer__name">{site.autor}</p>
-      <p class="footer__muted">{site.tituloLibro}</p>
+      <p class="footer__name">{site.author}</p>
+      <p class="footer__muted">{site.bookTitle}</p>
     </div>
 
     <div class="footer__block">
-      <p class="footer__heading">Contacto</p>
-      <a class="footer__link" href={`mailto:${contacto.email}`}>{contacto.email}</a>
+      <p class="footer__heading">Contact</p>
+      <a class="footer__link" href={`mailto:${contact.email}`}>{contact.email}</a>
       {
-        contacto.whatsappUrl && (
-          <a class="footer__link" href={contacto.whatsappUrl} target="_blank" rel="noopener noreferrer">
+        contact.whatsappUrl && (
+          <a class="footer__link" href={contact.whatsappUrl} target="_blank" rel="noopener noreferrer">
             WhatsApp
           </a>
         )
@@ -31,7 +31,7 @@ const socialLinks = [
     {
       socialLinks.length > 0 && (
         <div class="footer__block">
-          <p class="footer__heading">Redes</p>
+          <p class="footer__heading">Social</p>
           {socialLinks.map((s) => (
             <a class="footer__link" href={s.href} target="_blank" rel="noopener noreferrer">
               {s.label}
@@ -43,7 +43,7 @@ const socialLinks = [
   </div>
 
   <div class="container">
-    <p class="footer__copy">© {year} {site.autor}. All rights reserved.</p>
+    <p class="footer__copy">© {year} {site.author}. All rights reserved.</p>
   </div>
 </footer>
 
