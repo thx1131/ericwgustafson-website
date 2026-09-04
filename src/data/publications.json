@@ -48,7 +48,7 @@
     "description": "One of the most successful and sustainable wildlife restoration projects, benefiting migratory waterfowl from Canada, the United States, and Mexico, as well as local communities.",
     "status": "inquire",
     "amazon": null,
-    "image": null,
+    "image": "/images/laguna-flamingos-cover.webp",
     "genres": ["Conservation Report"],
     "pages": null,
     "formats": null
@@ -64,7 +64,7 @@
     "description": "An examination of the present and future status of the White Winged Dove in northeastern Mexico.",
     "status": "inquire",
     "amazon": null,
-    "image": null,
+    "image": "/images/white-winged-dove-ne-mexico-cover.webp",
     "genres": ["Conservation Report"],
     "pages": null,
     "formats": null
@@ -80,7 +80,7 @@
     "description": "A study of the Soto la Marina River watershed and its restoration needs — work that helped drive the construction of a treatment plant for raw sewage contaminating oysters, fisheries, and drinking water.",
     "status": "inquire",
     "amazon": null,
-    "image": null,
+    "image": "/images/soto-la-marina-cover.webp",
     "genres": ["Conservation Report"],
     "pages": null,
     "formats": null
@@ -96,7 +96,7 @@
     "description": "Written while alternating semesters between the University of Massachusetts and the Monterrey Institute of Technology, setting up the Center.",
     "status": "out_of_print",
     "amazon": null,
-    "image": null,
+    "image": "/images/teaching-improvement-center-cover.webp",
     "genres": ["Academic"],
     "pages": null,
     "formats": null
@@ -112,7 +112,7 @@
     "description": "Cultural guidance for Canadians and Americans living in Monterrey, co-written with ASFM teachers as part of a Temple University Masters in Education course.",
     "status": "out_of_print",
     "amazon": null,
-    "image": null,
+    "image": "/images/mexico-monterrey-and-you-cover.webp",
     "genres": ["Academic"],
     "pages": null,
     "formats": null
@@ -128,7 +128,7 @@
     "description": "The turnaround of a money-losing ranch — 35% larger than Liechtenstein — into an ecosystem sustainably benefiting wildlife, the environment, and its inhabitants. Author wrote the prologue.",
     "status": "out_of_print",
     "amazon": null,
-    "image": null,
+    "image": "/images/success-story-rural-mexico-cover.webp",
     "genres": ["Conservation Report"],
     "pages": null,
     "formats": null
@@ -144,7 +144,7 @@
     "description": "Three chapters by the author: Wildlife Sustainability, Modernizing Mexico's Agriculture, and Sustainability in Education.",
     "status": "out_of_print",
     "amazon": null,
-    "image": null,
+    "image": "/images/eco-efficiency-cover.webp",
     "genres": ["Academic"],
     "pages": null,
     "formats": null
@@ -160,7 +160,7 @@
     "description": "Author contributed the chapter on Mexico's waterfowl.",
     "status": "out_of_print",
     "amazon": null,
-    "image": null,
+    "image": "/images/fireside-waterfowler-cover.webp",
     "genres": ["Contribution"],
     "pages": null,
     "formats": null
@@ -176,7 +176,7 @@
     "description": "Author wrote the chapter on ducks and geese.",
     "status": "out_of_print",
     "amazon": null,
-    "image": null,
+    "image": "/images/aves-de-mexico-cover.webp",
     "genres": ["Contribution"],
     "pages": null,
     "formats": null
