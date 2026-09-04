@@ -4,22 +4,22 @@ import { contacto } from '../data/site.js';
 ---
 
 <Layout
-  title="Contacto — Eric Gustafson"
-  description="Contacta a Eric Gustafson por correo o WhatsApp."
+  title="Contact — Eric Gustafson"
+  description="Contact Eric Gustafson by email or WhatsApp."
 >
   <section class="section">
     <div class="container">
       <div class="section-heading section-heading--underline">
-        <h1>Contacto</h1>
+        <h1>Contact</h1>
         <p class="section-lead">
-          Para consultas de prensa, colaboraciones o comentarios sobre <em>Mexico Viking</em>,
-          escribe directamente.
+          For press inquiries, collaborations, or comments about <em>Mexico Viking</em>,
+          reach out directly.
         </p>
       </div>
 
       <div class="contact-grid">
         <a class="card contact-card" href={`mailto:${contacto.email}`}>
-          <span class="contact-card__label">Correo</span>
+          <span class="contact-card__label">Email</span>
           <span class="contact-card__value">{contacto.email}</span>
         </a>
 
@@ -32,12 +32,12 @@ import { contacto } from '../data/site.js';
               rel="noopener noreferrer"
             >
               <span class="contact-card__label">WhatsApp</span>
-              <span class="contact-card__value">Enviar mensaje</span>
+              <span class="contact-card__value">Send a Message</span>
             </a>
           ) : (
             <div class="card contact-card contact-card--disabled">
               <span class="contact-card__label">WhatsApp</span>
-              <span class="contact-card__value">Próximamente</span>
+              <span class="contact-card__value">Coming Soon</span>
             </div>
           )
         }
@@ -82,18 +82,18 @@ import { contacto } from '../data/site.js';
   }
 
   .contact-card__label {
-    font-family: var(--font-heading);
+    font-family: var(--font-body);
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-gold);
+    color: var(--color-text-muted);
   }
 
   .contact-card__value {
     font-family: var(--font-heading);
-    font-weight: 700;
+    font-weight: 500;
     font-size: 1.1rem;
-    color: var(--color-blue-deep);
+    color: var(--color-accent);
   }
 </style>

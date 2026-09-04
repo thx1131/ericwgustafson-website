@@ -14,7 +14,7 @@
       "audiobook": null
     },
     "imagen": "/images/mexico-viking-cover.jpg",
-    "generos": ["Novela", "Aventura", "Conservación"],
+    "generos": ["Novel", "Adventure", "Conservation"],
     "idiomas": ["Español", "Inglés"],
     "paginas": 178,
     "formato": ["Paperback", "Kindle"]

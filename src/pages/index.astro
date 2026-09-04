@@ -6,24 +6,24 @@ import libros from '../data/libros.json';
 const libroDestacado = libros[0];
 ---
 
-<Layout title="Eric Gustafson — Autor de Mexico Viking">
+<Layout title="Eric Gustafson — Author of Mexico Viking">
   <section class="section hero">
     <div class="container hero__inner">
       <div class="hero__text">
         <h1>Eric Gustafson</h1>
         <p class="hero__lead">
-          Autor de <strong>Mexico Viking</strong>, una novela sobre raíces escandinavas y
-          mexicanas, aventura y la lucha por la conservación ambiental.
+          Author of <strong>Mexico Viking</strong>, a novel about Scandinavian and
+          Mexican roots, adventure, and the fight for environmental conservation.
         </p>
         <div class="hero__actions">
-          <a class="btn btn-primary" href="/publicaciones">Ver publicaciones</a>
-          <a class="btn btn-secondary" href="/bio">Conocer al autor</a>
+          <a class="btn btn-primary" href="/publicaciones">View Publications</a>
+          <a class="btn btn-secondary" href="/bio">About the Author</a>
         </div>
       </div>
       {
         libroDestacado?.imagen && (
           <div class="hero__cover">
-            <img src={libroDestacado.imagen} alt={`Portada de ${libroDestacado.titulo}`} />
+            <img src={libroDestacado.imagen} alt={`Cover of ${libroDestacado.titulo}`} />
           </div>
         )
       }
@@ -35,12 +35,12 @@ const libroDestacado = libros[0];
       <section class="section section--muted">
         <div class="container">
           <div class="section-heading section-heading--underline">
-            <h2>Sobre el libro</h2>
+            <h2>About the Book</h2>
           </div>
           <div class="book-highlight">
             <p>{libroDestacado.descripcion}</p>
             <a class="btn btn-secondary" href="/publicaciones">
-              Más detalles
+              Read More
             </a>
           </div>
         </div>
@@ -53,7 +53,7 @@ const libroDestacado = libros[0];
       <section class="section">
         <div class="container">
           <div class="section-heading">
-            <h2>Última publicación</h2>
+            <h2>Latest Release</h2>
           </div>
           <div class="latest-book">
             <CardLibro libro={libroDestacado} />
@@ -65,16 +65,21 @@ const libroDestacado = libros[0];
 </Layout>
 
 <style>
+  .hero {
+    padding-top: var(--space-3xl);
+  }
+
   .hero__inner {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-2xl);
+    gap: var(--space-3xl);
     align-items: center;
   }
 
   @media (min-width: 768px) {
     .hero__inner {
       grid-template-columns: 3fr 2fr;
+      gap: var(--space-4xl);
     }
   }
 

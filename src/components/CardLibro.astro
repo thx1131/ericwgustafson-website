@@ -17,14 +17,14 @@ const { libro } = Astro.props;
 const enlaceAmazon = libro.amazon?.paperback || libro.amazon?.kindle || libro.amazon?.audiobook;
 ---
 
-<article class="card card-libro">
+<article class="card-libro">
   <div class="card-libro__cover">
-    <img src={libro.imagen} alt={`Portada de ${libro.titulo}`} loading="lazy" />
+    <img src={libro.imagen} alt={`Cover of ${libro.titulo}`} loading="lazy" />
   </div>
 
   <div class="card-libro__body">
     <span class={`badge ${libro.disponible ? 'badge--available' : 'badge--soldout'}`}>
-      {libro.disponible ? 'Disponible' : 'Agotado'}
+      {libro.disponible ? 'Available' : 'Out of Print'}
     </span>
 
     <h3 class="card-libro__title">{libro.titulo}</h3>
@@ -41,7 +41,7 @@ const enlaceAmazon = libro.amazon?.paperback || libro.amazon?.kindle || libro.am
     {
       libro.disponible && enlaceAmazon && (
         <a class="btn btn-primary" href={enlaceAmazon} target="_blank" rel="noopener noreferrer">
-          Comprar en Amazon
+          Buy on Amazon
         </a>
       )
     }
@@ -53,8 +53,8 @@ const enlaceAmazon = libro.amazon?.paperback || libro.amazon?.kindle || libro.am
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    padding: 0;
-    overflow: hidden;
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-lg);
   }
 
   .card-libro__cover {
@@ -75,13 +75,15 @@ const enlaceAmazon = libro.amazon?.paperback || libro.amazon?.kindle || libro.am
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    padding: var(--space-lg);
+    padding: 0;
   }
 
   .card-libro__title {
     margin: 0;
+    font-family: var(--font-heading);
     font-size: 1.4rem;
-    color: var(--color-blue-deep);
+    font-weight: 500;
+    color: var(--color-accent);
   }
 
   .card-libro__subtitle {
@@ -97,7 +99,10 @@ const enlaceAmazon = libro.amazon?.paperback || libro.amazon?.kindle || libro.am
 
   .card-libro__meta {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: var(--color-text-muted);
   }
 

@@ -37,19 +37,20 @@ function isActive(href) {
   }
 
   .nav__link {
-    font-family: var(--font-heading);
-    font-weight: 600;
+    font-family: var(--font-body);
+    font-weight: 500;
     font-size: 0.95rem;
-    color: var(--color-white);
-    border-bottom: 2px solid transparent;
+    color: var(--color-text);
+    border-bottom: 1px solid transparent;
     padding-bottom: 2px;
   }
 
   .nav__link:hover {
-    border-bottom-color: var(--color-gold);
+    border-bottom-color: var(--color-accent);
   }
 
   .nav__link[aria-current='page'] {
-    border-bottom-color: var(--color-gold);
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
   }
 </style>

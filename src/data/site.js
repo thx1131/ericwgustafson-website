@@ -6,7 +6,7 @@ export const site = {
   autor: 'Eric Gustafson',
   tituloLibro: 'Mexico Viking',
   descripcionCorta:
-    'Autor de Mexico Viking, una novela sobre raíces escandinavas y mexicanas, aventura y conservación ambiental.',
+    'Author of Mexico Viking, a novel about Scandinavian and Mexican roots, adventure, and environmental conservation.',
 };
 
 export const contacto = {
@@ -24,8 +24,8 @@ export const redes = {
 };
 
 export const navLinks = [
-  { href: '/', label: 'Inicio' },
-  { href: '/bio', label: 'Biografía' },
-  { href: '/publicaciones', label: 'Publicaciones' },
-  { href: '/contacto', label: 'Contacto' },
+  { href: '/', label: 'Home' },
+  { href: '/bio', label: 'Biography' },
+  { href: '/publicaciones', label: 'Publications' },
+  { href: '/contacto', label: 'Contact' },
 ];
