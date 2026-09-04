@@ -111,7 +111,7 @@ npm install -g wrangler
 wrangler login
 
 # Deploy
-wrangler pages deploy dist --project-name=ericwgustafson
+wrangler pages deploy dist --project-name=ericwgustafson-website
 ```
 
 ## 📚 Secciones del Sitio
