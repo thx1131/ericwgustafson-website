@@ -1,10 +1,12 @@
 # Documento de Traspaso — Sitio de Eric Gustafson
 
-**Fecha:** 4 de septiembre, 2026 (revisado y actualizado el mismo día por Claude Code tras cotejar contra el estado real del repo, el historial de Actions en GitHub y el sitio en vivo)
+**Fecha:** 4 de septiembre, 2026 — última actualización 5 de septiembre, 2026 (por Claude Code, cotejado contra el repo real, el historial de GitHub Actions vía API, y el sitio en vivo)
 **Preparado por:** Luis Alberto Gálvez López (editor / gestor del proyecto)
 **Proyecto:** Sitio de autor para Eric Gustafson, promoción de *Mexico Viking*
 
 > **Nota de la revisión:** este documento describía un estado *anterior* al ya avanzado en el repo — varios puntos marcados como "pendiente" ya estaban implementados y en vivo. Las secciones de abajo fueron corregidas contra el código real, el log de `git`, el historial de GitHub Actions (vía API) y una consulta directa al sitio publicado. Los cambios de fondo respecto a la versión original están marcados inline.
+>
+> **Actualización del 5 de septiembre:** WhatsApp real ya está en vivo, se corrigieron 7 títulos/subtítulos de publicaciones contra sus portadas reales, se agregó una ficha nueva (edición en español de un libro), y se redujo el tamaño de las portadas de "Books". El GitHub Action de deploy sigue fallando (los secrets de Cloudflare en GitHub siguen en cero) — ver sección 2.
 
 ---
 
@@ -47,7 +49,9 @@ El sitio en vivo nunca estuvo en riesgo porque la vía 1 seguía funcionando en 
 - `--project-name` del wrangler deploy: `ericwgustafson` → `ericwgustafson-website` (también corregido en el comando manual de `README.md`)
 - Se agregó `"engines": { "node": ">=22.12.0" }` a `package.json` para que un futuro downgrade de Node falle explícitamente en vez de romper CI en silencio
 
-Con esto, ambas vías de deploy apuntan al mismo proyecto real y el Action debería empezar a pasar.
+Con esto, ambas vías de deploy apuntan al mismo proyecto real — pero **el Action sigue fallando** (confirmado el 5 de septiembre, runs `33929871683` en adelante, 6/6 fallidos desde el fix): ahora sí compila, pero se cae en el paso de deploy porque **no hay ningún secret configurado en GitHub** (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `AUTHOR_EMAIL`, `WHATSAPP_NUMBER` — los 4 en cero, confirmado vía API: `total_count: 0`). Wrangler lo dice explícito: *"it's necessary to set a CLOUDFLARE_API_TOKEN environment variable for wrangler to work"*.
+
+**Esto no afecta el sitio en vivo** — Luis ya resolvió el WhatsApp agregando la variable directo en el dashboard de Cloudflare (ver abajo), que es la vía que de verdad construye el sitio. El Action de GitHub sigue siendo un cheque rojo decorativo en cada push. Queda pendiente decidir si se carga el secret ahí también o se elimina el workflow (ver sección 5, punto 🔴 1).
 
 ---
 
@@ -62,10 +66,13 @@ Confirmado revisando el código actual del repo (esta sección estaba desactuali
 - ✅ Página de Publications reestructurada en dos secciones — "Books" (cards grandes, solo `available`) y "Selected Writings & Contributions" (las otras 9, ordenadas por año) — el `ADDENDUM_PUBLICATIONS.md` ya se ejecutó
 - ✅ `publications.json` con las 11 publicaciones reales ya es el archivo en uso (no quedan referencias a un `libros.json` viejo)
 - ✅ Bio con el texto real de Eric ya integrado en `bio.astro` (educación, ASFM, ITESM, FEMSA, deportes) — no es contenido placeholder
-- ✅ Las 11 publicaciones ya tienen portada (las últimas 9 se subieron y conectaron el 2026-09-04)
+- ✅ Las 12 publicaciones ya tienen portada (9 se subieron y conectaron el 2026-09-04; la 12ª —edición en español de "A Story of Success in Rural Mexico"— el 2026-09-05)
 - ✅ Logo de marca en header + favicon
-- ✅ Página de Contacto con mailto + WhatsApp (estructura lista, pendiente confirmar número real de WhatsApp)
-- ⚠️ **Pipeline de deploy — corregido hoy, ver nota de la sección 2.** No estaba "100% funcional y probado" como decía la versión original de este documento: el GitHub Action llevaba 13/13 ejecuciones fallidas desde el commit inicial. El sitio seguía en línea solo gracias a la integración nativa de Cloudflare. Ya se corrigió Node 18→22 y el nombre de proyecto; **queda pendiente configurar los secrets de Cloudflare en GitHub para que el Action llegue a desplegar** (ver sección 5).
+- ✅ **WhatsApp real ya en vivo** (2026-09-05): `528180533791`, confirmado en Home y Contact (`wa.me/528180533791`) vía la variable de ambiente `VITE_WHATSAPP_NUMBER` que Luis agregó directo en Cloudflare Pages. El `.env` local ya tenía el número desde antes, pero nunca había llegado a producción porque ese archivo está (correctamente) fuera de git.
+- ✅ **7 títulos/subtítulos de publicaciones corregidos** (2026-09-05) tras comparar cada portada real contra `publications.json` — había diferencias de fondo, no solo de forma: "White Winged Dove in NE Mexico" → "The White Wing Dove in Northeast México"; "...Teaching Improvement Center..." le faltaba "Post Secondary"; "Success Story in Rural Mexico" tenía las palabras en otro orden que la portada ("A Story of Success in Rural Mexico"); "Aves de México" le faltaba el prefijo "El Libro de"; "Eco Efficiency" en realidad es un título en español ("Eco Eficiencia"). Se completaron también 5 subtítulos que estaban en `null` pese a aparecer en la portada.
+- ✅ Corregida una atribución equivocada: la ficha de "A Story of Success in Rural Mexico" decía que Eric escribió el "prólogo"; la portada muestra que el prólogo lo firma Eugenio Gras Menaut y Eric escribió el "proemio" (preface) — ya corregido en la descripción.
+- ✅ Portadas de "Books" (Mexico Viking, Joe and Running Bear) reducidas de ~580px a 320px de ancho en la página de Publications — antes dominaban visualmente la sección.
+- ⚠️ **Pipeline de deploy — el Action de GitHub sigue fallando, ver nota de la sección 2.** No estaba "100% funcional y probado" como decía la versión original de este documento: llevaba 13/13 ejecuciones fallidas desde el commit inicial por Node 18 vs Astro ≥22.12. Ya se corrigió esa causa (commit `13befee`), pero ahora falla en el paso de deploy por falta de secrets de Cloudflare en GitHub — sigue sin resolverse. El sitio en vivo sigue bien gracias a la integración nativa de Cloudflare, que es independiente de este Action.
 
 **Idioma actual del sitio en vivo:** **inglés**, confirmado en el HTML servido (`<html lang="en">`, nav "Home/Biography/Publications/Contact"). La traducción ya no está pendiente.
 
@@ -86,6 +93,7 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 | `BRIEF_CLAUDE_CODE_REDISENO.md` | Rediseño editorial + traducción de UI a inglés | ✅ **Ya ejecutado por completo** |
 | `ADDENDUM_PUBLICATIONS.md` | Restructurar Publications en "Books" / "Selected Writings" con 3 estados | ✅ **Ya ejecutado** — con una desviación menor: el addendum pedía la sección "Selected Writings" como lista bibliográfica *sin* imágenes; la implementación real usa cards compactas (`PublicationCard compact`) que sí muestran imagen/placeholder, y el 2026-09-04 se les agregó portada real a las 9 entradas de esa sección |
 | `eric-gustafson-photo.jpg` | Foto de Eric recortada de la contraportada de *Joe and Running Bear* | ❌ **No está en el repo.** `bio.astro` referencia `/images/eric-gustafson.jpg`, archivo inexistente — la imagen sale rota en el sitio en vivo hoy mismo. Sigue siendo el pendiente real más visible. |
+| Edición en español de *A Story of Success in Rural Mexico* ("Una Historia de Éxito en el México Rural") | Portada en español, mismo libro que la ficha en inglés | ✅ **Ficha nueva creada** el 2026-09-05: `success-story-rural-mexico-es` en `publications.json`, con su propia portada y descripción en español |
 
 ---
 
@@ -100,9 +108,9 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 ### 🟡 Importante, no bloqueante
 3. **CMS headless (Decap CMS)** — aún no se ha instalado. Definir primero: ¿quién edita? (¿Eric directo, requiere GitHub, o alternativa con login simple?). Alcance propuesto: editable = textos de bio, datos de publicaciones (precio, estado, links, portadas). NO editable vía CMS = colores/tipografía (decisión de diseño fija)
 4. **Link de Amazon Kindle** faltante para *Mexico Viking* y *Joe and Running Bear* (solo se tienen paperback confirmados; Kindle de Mexico Viking es placeholder `XXXXX`)
-5. **Confirmar email y número de WhatsApp definitivos** para la página de Contacto (aún placeholder en `.env.example`)
+5. **Confirmar email definitivo** para la página de Contacto (aún placeholder `eric@example.com` en `.env.example`/Cloudflare — el WhatsApp ya se resolvió el 2026-09-05)
 6. **Dominio propio** — apuntar `ericwgustafson.com` a Cloudflare Pages (confirmado: hoy no resuelve DNS, sigue viviendo solo en `.pages.dev`)
-7. **Sección "Selected Writings" con imágenes** — decidir si se deja como cards con portada (estado actual, ya con las 9 portadas subidas) o se vuelve a la lista bibliográfica sin imágenes que pedía el `ADDENDUM_PUBLICATIONS.md` original
+7. **Sección "Selected Writings" con imágenes** — decidir si se deja como cards con portada (estado actual, ya con las 10 portadas subidas) o se vuelve a la lista bibliográfica sin imágenes que pedía el `ADDENDUM_PUBLICATIONS.md` original
 
 ### ✅ Ya resuelto (archivado — estaba mal marcado como pendiente en la versión anterior de este documento)
 - ~~Ejecutar el rediseño editorial~~ — hecho, ver sección 3
@@ -111,6 +119,10 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 - ~~Integrar texto de bio desde `BIO_CONTENT.md`~~ — hecho
 - ~~Traducir la UI a inglés~~ — hecho
 - ~~Subir portadas de las 9 publicaciones restantes~~ — hecho el 2026-09-04
+- ~~Confirmar y publicar el número de WhatsApp real~~ — hecho el 2026-09-05 (`528180533791`, vía variable de ambiente en Cloudflare Pages)
+- ~~Corregir títulos/subtítulos de publicaciones contra sus portadas reales~~ — hecho el 2026-09-05 (7 correcciones + 5 subtítulos agregados)
+- ~~Crear ficha para la edición en español de "A Story of Success in Rural Mexico"~~ — hecho el 2026-09-05
+- ~~Reducir tamaño de portadas de "Books" en Publications~~ — hecho el 2026-09-05
 
 ### 🟢 Futuro / fase 2
 10. **Mapa interactivo de los viajes de Nils** — idea original del proyecto, sin diseño ni datos de coordenadas todavía. Requiere definir fuente de datos (¿capítulos del libro anotados con lugares/fechas?)
@@ -140,6 +152,7 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 - ¿Quién va a editar el CMS cuando se instale — Eric directamente (requiere cuenta GitHub) o solo Luis?
 - El subtítulo "Memoir" del sitio hereda el conflicto de clasificación del libro — no es urgente pero puede generar inconsistencia si se resuelve tarde
 - Falta confirmar disponibilidad real de Kindle para ambos libros (actualmente solo paperback confirmado)
+- Falta confirmar y cargar el email real de contacto (WhatsApp ya resuelto el 2026-09-05)
 - **Falta foto de Eric por completo** en el sitio en vivo — no es un problema de resolución, es una imagen rota (404) hoy mismo
 - **El remoto `origin` de este repo local tiene el token personal de GitHub de Luis embebido en texto plano** en `.git/config` (`https://thx1131:ghp_...@github.com/...`). Cualquiera con acceso a esta máquina/repo local puede leerlo. Recomendado: revocar ese token y reconfigurar el remoto con un credential helper en vez de la URL. (Señalado también en la sesión de Claude Code del 2026-09-04, sección de git.)
 - ¿Vale la pena mantener el GitHub Action de deploy si la integración nativa de Cloudflare ya cubre el despliegue? Si se decide que sí, falta cargar los secrets de Cloudflare en GitHub (ver sección 5, punto 🔴 1). Si se decide que no, se puede simplificar borrando `.github/workflows/deploy.yml` para dejar de depender de dos mecanismos en paralelo.
@@ -150,7 +163,7 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 
 - **Repo GitHub**: `github.com/thx1131/ericwgustafson-website`
 - **Cloudflare Pages**: proyecto `ericwgustafson-website`, cuenta de Luis
-- **Variables de ambiente necesarias**: `VITE_AUTHOR_EMAIL`, `VITE_WHATSAPP_NUMBER` (configuradas como placeholder, confirmar valores reales)
+- **Variables de ambiente**: `VITE_WHATSAPP_NUMBER` ya configurada con el valor real (`528180533791`) directo en Cloudflare Pages desde el 2026-09-05. `VITE_AUTHOR_EMAIL` sigue como placeholder — falta confirmar y cargar el email real, en el mismo lugar (Cloudflare Pages → Settings → Environment variables)
 - **Manuscrito fuente**: `Mexico_Viking_-_V2.docx` (adjunto en el proyecto de Claude, contiene bibliografía completa en sección "Additional Publications" y bio de contraportada de *Joe and Running Bear*)
 - **Portada final**: `portada_v9.pdf` (referencia de subtítulo formal y diseño de portada — NO es el estilo visual del sitio)
 
@@ -158,12 +171,12 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 
 ## 9. Próximos pasos inmediatos (orden sugerido)
 
-*(Reemplazados — los pasos originales, 1 a 4, ya estaban hechos.)*
+*(Actualizado 2026-09-05 — WhatsApp ya resuelto, se quita de la lista.)*
 
 1. Decidir el destino del GitHub Action de deploy: cargar los secrets de Cloudflare en GitHub para que funcione de punta a punta, o eliminarlo si la integración nativa de Cloudflare es suficiente
 2. Conseguir y subir una foto real de Eric a `public/images/eric-gustafson.jpg`
 3. Revocar el token de GitHub embebido en `.git/config` y reconfigurar el remoto con un credential helper
-4. Confirmar email/WhatsApp reales y actualizar los secrets/variables correspondientes
+4. Confirmar el email real y cargarlo como `VITE_AUTHOR_EMAIL` en Cloudflare Pages (mismo mecanismo ya usado para el WhatsApp)
 5. Retomar backlog 🟡 (CMS, dominio propio, links de Kindle, decisión sobre imágenes en "Selected Writings")
 
 ---
