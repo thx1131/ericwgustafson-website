@@ -144,3 +144,17 @@ vite.config.ts.timestamp-*
 
 # Astro generated types
 .astro/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Wrangler local dev cache
+.wrangler/
+
+# Local-only planning notes (not needed by GitHub/the build)
+BRIEF_CLAUDE_CODE_REDISENO.md
