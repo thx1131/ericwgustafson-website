@@ -9,7 +9,6 @@ import { site } from '../data/site.js';
       <img class="header__logo" src="/images/logo-eric-gustafson.png" alt="" />
       <span class="header__brand-text">
         <span class="header__name">{site.author}</span>
-        <span class="header__tag">{site.bookTitle}</span>
       </span>
     </a>
     <Nav />
@@ -62,12 +61,4 @@ import { site } from '../data/site.js';
     letter-spacing: 0;
   }
 
-  .header__tag {
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-  }
 </style>

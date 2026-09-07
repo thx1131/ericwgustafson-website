@@ -13,7 +13,7 @@
       "paperback": "https://www.amazon.com/dp/XXXXX",
       "kindle": "https://www.amazon.com/dp/XXXXX"
     },
-    "image": "/images/mexico-viking-cover.jpg",
+    "image": "/images/mexico-viking-cover.webp",
     "genres": ["Novel", "Adventure", "Conservation"],
     "pages": 178,
     "formats": ["Paperback", "Kindle"]
@@ -32,7 +32,7 @@
       "paperback": "https://a.co/d/0bBIWLOF",
       "kindle": null
     },
-    "image": "/images/joe-and-running-bear-cover.jpg",
+    "image": "/images/joe-and-running-bear-cover.webp",
     "genres": ["Novel", "Youth", "Adventure"],
     "pages": null,
     "formats": ["Paperback"]
