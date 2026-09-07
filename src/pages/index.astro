@@ -12,8 +12,15 @@ const featured = publications.find((p) => p.status === 'available');
       <div class="hero__text">
         <h1>Eric Gustafson</h1>
         <p class="hero__lead">
-          Author of <strong>Mexico Viking</strong>, a novel about Scandinavian and
-          Mexican roots, adventure, and the fight for environmental conservation.
+          Author of seven books and numerous contributions to conservation
+          literature. His work returns to a single throughline: the
+          environmental heritage of Mexico, and a life lived between two
+          worlds.
+        </p>
+        <p class="hero__lead">
+          His latest novel, <em>Mexico Viking</em>, follows a man born in
+          Mexico with Scandinavian roots — part memoir, part adventure, part
+          reflection on the country's natural future.
         </p>
         <div class="hero__actions">
           <a class="btn btn-primary" href="/publications">View Publications</a>
@@ -86,7 +93,11 @@ const featured = publications.find((p) => p.status === 'available');
   .hero__lead {
     font-size: 1.15rem;
     color: var(--color-text-muted);
-    max-width: 46ch;
+    max-width: 52ch;
+  }
+
+  .hero__lead + .hero__lead {
+    margin-top: var(--space-md);
   }
 
   .hero__actions {
