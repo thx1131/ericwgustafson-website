@@ -1,0 +1,519 @@
+---
+import Layout from '../layouts/Layout.astro';
+import journey from '../data/journey.json';
+import positions from '../data/journeyPositions.json';
+
+const stops = [...journey].sort((a, b) => a.order - b.order);
+const firstStop = stops[0];
+const firstPosition = positions[firstStop.id];
+---
+
+<Layout
+  title="The Voyages of Nils — Eric Gustafson"
+  description="Follow Nils's journey through Mexico, the United States, Alaska, and northern Europe in Mexico Viking."
+>
+  <section class="section journey-page">
+    <div class="container">
+      <header class="journey-heading">
+        <p class="eyebrow">Mexico Viking</p>
+        <h1>The Voyages of Nils</h1>
+        <p class="journey-intro">
+          Follow Nils through the places, memories, and encounters that shape his life.
+        </p>
+      </header>
+
+      <div class="journey-layout" data-journey>
+        <div class="map-frame" aria-label="Illustrated map of Nils's journey">
+          <img
+            class="journey-map"
+            src="/images/journey/map-world.png"
+            alt="Illustrated map showing Mexico and the United States on the left, northern Europe on the right, and Alaska in a separate inset."
+            width="3072"
+            height="2048"
+          />
+          <svg class="journey-trail" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+            <path class="journey-trail__halo" data-trail-halo></path>
+            <path class="journey-trail__path" data-trail></path>
+            {stops.map((stop, index) => (
+              <circle
+                class="journey-trail__dot"
+                data-dot-index={index}
+                cx={(positions[stop.id].x / 100) * 300}
+                cy={(positions[stop.id].y / 100) * 200}
+                r="2.6"
+              />
+            ))}
+          </svg>
+          <div
+            class="journey-ship"
+            aria-hidden="true"
+            style={`left: ${firstPosition.x}%; top: ${firstPosition.y}%`}
+          >
+            <img class="journey-ship__img" src="/images/journey/ship.png" alt="" width="987" height="1011" />
+          </div>
+          <span class="map-caption" aria-hidden="true">A journey across places and years</span>
+        </div>
+
+        <article class="stop-panel" aria-live="polite" aria-atomic="true">
+          <p class="stop-panel__eyebrow" data-stop-date>{firstStop.date ?? 'Date unknown'}</p>
+          <h2 data-stop-chapter>{firstStop.chapter}</h2>
+          <p class="stop-panel__place" data-stop-place>{firstStop.place}</p>
+          <p class="stop-panel__description" data-stop-description>{firstStop.description}</p>
+          <div class="journey-controls" aria-label="Journey navigation">
+            <button class="control-button" type="button" data-previous aria-label="Previous stop">← Previous</button>
+            <span class="stop-count" data-stop-count>01 / {String(stops.length).padStart(2, '0')}</span>
+            <button class="control-button" type="button" data-next aria-label="Next stop">Next →</button>
+          </div>
+        </article>
+      </div>
+
+      <nav class="timeline" aria-label="Journey stops">
+        <ol class="timeline__list">
+          {stops.map((stop, index) => (
+            <li class="timeline__item">
+              <button
+                class="timeline__stop"
+                type="button"
+                data-stop-index={index}
+                data-stop-id={stop.id}
+                data-chapter={stop.chapter}
+                data-place={stop.place}
+                data-date={stop.date ?? 'Date unknown'}
+                data-description={stop.description}
+                data-x={positions[stop.id].x}
+                data-y={positions[stop.id].y}
+                aria-label={`${stop.order}. ${stop.chapter}, ${stop.place}`}
+                aria-pressed={index === 0 ? 'true' : 'false'}
+                title={`${stop.chapter} — ${stop.place}`}
+              >
+                <span class="timeline__number">{String(stop.order).padStart(2, '0')}</span>
+                <span class="timeline__chapter">{stop.chapter}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const root = document.querySelector('[data-journey]');
+
+  if (root) {
+    const stops = [...document.querySelectorAll('[data-stop-index]')];
+    const ship = root.querySelector('.journey-ship');
+    const panel = root.querySelector('.stop-panel');
+    const date = root.querySelector('[data-stop-date]');
+    const chapter = root.querySelector('[data-stop-chapter]');
+    const place = root.querySelector('[data-stop-place]');
+    const description = root.querySelector('[data-stop-description]');
+    const count = root.querySelector('[data-stop-count]');
+    const previous = root.querySelector('[data-previous]');
+    const next = root.querySelector('[data-next]');
+    const trailPath = root.querySelector('[data-trail]');
+    const trailHalo = root.querySelector('[data-trail-halo]');
+    const trailDots = [...root.querySelectorAll('.journey-trail__dot')];
+    let activeIndex = 0;
+    let panelTimer;
+
+    function updateTrail(index) {
+      const points = stops
+        .slice(0, index + 1)
+        .map((item) => `${(Number(item.dataset.x) / 100) * 300},${(Number(item.dataset.y) / 100) * 200}`);
+      const d = points.length > 1 ? `M${points.join(' L')}` : '';
+      trailPath.setAttribute('d', d);
+      trailHalo.setAttribute('d', d);
+
+      trailDots.forEach((dot, dotIndex) => {
+        dot.classList.toggle('is-visited', dotIndex <= index);
+        dot.classList.toggle('is-current', dotIndex === index);
+      });
+    }
+
+    function activate(index) {
+      const boundedIndex = Math.max(0, Math.min(index, stops.length - 1));
+      const button = stops[boundedIndex];
+
+      activeIndex = boundedIndex;
+      ship.style.left = `${button.dataset.x}%`;
+      ship.style.top = `${button.dataset.y}%`;
+      updateTrail(boundedIndex);
+
+      panel.classList.add('is-changing');
+      window.clearTimeout(panelTimer);
+      panelTimer = window.setTimeout(() => {
+        date.textContent = button.dataset.date;
+        chapter.textContent = button.dataset.chapter;
+        place.textContent = button.dataset.place;
+        description.textContent = button.dataset.description;
+        count.textContent = `${String(boundedIndex + 1).padStart(2, '0')} / ${String(stops.length).padStart(2, '0')}`;
+        panel.classList.remove('is-changing');
+      }, 180);
+
+      stops.forEach((item, itemIndex) => {
+        item.setAttribute('aria-pressed', itemIndex === activeIndex ? 'true' : 'false');
+        item.classList.toggle('is-visited', itemIndex <= activeIndex);
+      });
+      button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    updateTrail(0);
+    stops[0]?.classList.add('is-visited');
+
+    stops.forEach((button) => {
+      button.addEventListener('click', () => activate(Number(button.dataset.stopIndex)));
+    });
+
+    previous.addEventListener('click', () => activate(activeIndex - 1));
+    next.addEventListener('click', () => activate(activeIndex + 1));
+
+    document.addEventListener('keydown', (event) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === 'ArrowLeft') activate(activeIndex - 1);
+      if (event.key === 'ArrowRight') activate(activeIndex + 1);
+    });
+  }
+</script>
+
+<style>
+  .journey-page {
+    overflow: hidden;
+  }
+
+  .journey-heading {
+    max-width: 720px;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .journey-heading h1 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .eyebrow,
+  .stop-panel__eyebrow {
+    color: var(--color-accent-soft);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .journey-intro {
+    max-width: 58ch;
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+  }
+
+  .journey-page .container {
+    max-width: 1600px;
+  }
+
+  .journey-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+    align-items: center;
+    gap: var(--space-2xl);
+  }
+
+  @media (max-width: 1080px) {
+    .journey-layout,
+    .timeline {
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+    }
+  }
+
+  .map-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+
+  .journey-map {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .journey-trail {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .journey-trail__halo {
+    fill: none;
+    stroke: var(--color-bg);
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    opacity: 0.8;
+  }
+
+  .journey-trail__path {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-dasharray: 2.4 2.8;
+    opacity: 1;
+  }
+
+  .journey-trail__dot {
+    fill: var(--color-bg);
+    stroke: var(--color-border);
+    stroke-width: 0.7;
+    opacity: 0.65;
+    transition: fill 0.3s ease, stroke 0.3s ease, opacity 0.3s ease;
+  }
+
+  .journey-trail__dot.is-visited {
+    fill: var(--color-accent);
+    stroke: var(--color-bg);
+    stroke-width: 0.9;
+    opacity: 1;
+  }
+
+  .journey-trail__dot.is-current {
+    opacity: 0;
+  }
+
+  .journey-ship {
+    position: absolute;
+    z-index: 2;
+    width: clamp(42px, 8.5%, 100px);
+    transform: translate(-50%, -55%);
+    transition: left 1.25s cubic-bezier(0.2, 0.7, 0.2, 1), top 1.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .journey-ship__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform-origin: 50% 85%;
+    animation: journey-ship-idle 4.5s ease-in-out infinite;
+  }
+
+  @keyframes journey-ship-idle {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-1.4deg);
+    }
+    50% {
+      transform: translateY(-6%) rotate(1.4deg);
+    }
+  }
+
+  .map-caption {
+    position: absolute;
+    bottom: 3%;
+    left: 3%;
+    color: var(--color-accent);
+    font-family: var(--font-heading);
+    font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+    font-style: italic;
+    pointer-events: none;
+  }
+
+  .stop-panel {
+    min-width: 0;
+    padding: var(--space-xl) 0;
+    transition: opacity 0.18s ease;
+  }
+
+  .stop-panel.is-changing {
+    opacity: 0;
+  }
+
+  .stop-panel__eyebrow {
+    margin-bottom: var(--space-md);
+  }
+
+  .stop-panel h2 {
+    margin-bottom: var(--space-sm);
+    font-size: clamp(2rem, 3vw, 3rem);
+  }
+
+  .stop-panel__place {
+    color: var(--color-accent-soft);
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-style: italic;
+  }
+
+  .stop-panel__description {
+    color: var(--color-text-muted);
+    line-height: 1.8;
+  }
+
+  .journey-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-md);
+  }
+
+  .control-button {
+    border: 0;
+    padding: 8px 0;
+    color: var(--color-accent);
+    background: transparent;
+    font: 500 0.9rem var(--font-body);
+    cursor: pointer;
+  }
+
+  .control-button:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .stop-count {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timeline {
+    margin-top: var(--space-2xl);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+    scrollbar-color: var(--color-accent-soft) var(--color-bg-muted);
+    scrollbar-width: thin;
+  }
+
+  .timeline__list {
+    display: grid;
+    grid-auto-columns: minmax(112px, 1fr);
+    grid-auto-flow: column;
+    list-style: none;
+    min-width: max-content;
+    margin: 0;
+    padding: 0;
+  }
+
+  .timeline__item {
+    position: relative;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .timeline__stop {
+    display: flex;
+    width: 100%;
+    min-height: 94px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    border: 0;
+    border-top: 3px solid transparent;
+    padding: 12px;
+    color: var(--color-text-muted);
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .timeline__stop.is-visited {
+    border-top-color: var(--color-border);
+  }
+
+  .timeline__stop:hover,
+  .timeline__stop[aria-pressed='true'] {
+    color: var(--color-accent);
+    background: var(--color-bg-muted);
+    border-top-color: var(--color-accent-soft);
+  }
+
+  .timeline__number {
+    color: var(--color-accent-soft);
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timeline__stop.is-visited .timeline__number {
+    color: var(--color-text);
+  }
+
+  .timeline__stop.is-visited .timeline__number::after {
+    content: ' ·';
+    color: var(--color-accent-soft);
+  }
+
+  .timeline__chapter {
+    font-family: var(--font-heading);
+    font-size: 0.96rem;
+    line-height: 1.25;
+  }
+
+  .timeline__stop:focus-visible,
+  .control-button:focus-visible {
+    outline: 2px solid var(--color-accent-soft);
+    outline-offset: -2px;
+  }
+
+  @media (max-width: 1080px) {
+    .journey-layout {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: 0;
+    }
+
+    .map-frame {
+      aspect-ratio: 3 / 2.15;
+    }
+
+    .stop-panel {
+      padding: var(--space-lg) var(--space-lg) var(--space-md);
+    }
+
+    .journey-heading {
+      margin-bottom: var(--space-lg);
+    }
+
+    .timeline__list {
+      padding: 0 var(--space-md);
+    }
+
+    .timeline {
+      margin-top: var(--space-xl);
+    }
+  }
+
+  @media (max-width: 680px) {
+    .stop-panel {
+      padding: var(--space-md) var(--space-md) var(--space-sm);
+    }
+
+    .journey-controls {
+      margin-top: var(--space-lg);
+    }
+
+    .timeline__list {
+      padding: 0 var(--space-md);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .journey-ship,
+    .stop-panel,
+    .timeline__stop {
+      transition-duration: 0.01ms;
+    }
+
+    .journey-ship__img {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,263 @@
+[
+  {
+    "order": 1,
+    "id": "toribio",
+    "chapter": "Toribio",
+    "place": "A ranch near Santa Engracia, Tamaulipas",
+    "coords_ref": [24.05, -98.85],
+    "date": "Childhood",
+    "description": "A young Nils has a premonition about his fishing guide's murder — his first brush with precognition, an ability he later chooses to shut off.",
+    "group": "origins"
+  },
+  {
+    "order": 2,
+    "id": "duke-and-mba",
+    "chapter": "Duke and MBA",
+    "place": "Durham, North Carolina",
+    "coords_ref": [35.99, -78.90],
+    "date": "1960s",
+    "description": "A family financial setback forces Nils to fund his own way through Duke, selling magazines at the football stadium to make ends meet.",
+    "group": "origins"
+  },
+  {
+    "order": 3,
+    "id": "annapolis",
+    "chapter": "Annapolis",
+    "place": "Annapolis, Maryland",
+    "coords_ref": [38.98, -76.49],
+    "date": "1963",
+    "description": "Duke's swim team faces Navy at Annapolis — a humbling defeat Nils remembers with self-deprecating humor.",
+    "group": "origins"
+  },
+  {
+    "order": 4,
+    "id": "birds-coughing",
+    "chapter": "Birds Coughing",
+    "place": "Duke University (reunion)",
+    "coords_ref": [36.00, -78.94],
+    "date": "1962",
+    "description": "A Duke reunion stirs memories of Dr. Rhine's parapsychology research, tying back to Nils' own unexplained gifts.",
+    "group": "origins"
+  },
+  {
+    "order": 5,
+    "id": "eugenio-garza-sada",
+    "chapter": "Eugenio Garza-Sada",
+    "place": "Monterrey, Mexico",
+    "coords_ref": [25.69, -100.32],
+    "date": null,
+    "description": "Nils pitches the Monterrey Institute of Technology's board on founding a Teaching Improvement Center.",
+    "group": "origins"
+  },
+  {
+    "order": 6,
+    "id": "shoshone-country",
+    "chapter": "Shoshone Country / One Shot",
+    "place": "Lander, Wyoming",
+    "coords_ref": [42.83, -108.73],
+    "date": null,
+    "description": "Nils test-fires long-range rifles at the Lander shooting range with his friend Wayne Olsen, ahead of the One-Shot competition.",
+    "group": "wyoming-alaska"
+  },
+  {
+    "order": 7,
+    "id": "medicine-man",
+    "chapter": "The Medicine Man",
+    "place": "Lander, Wyoming",
+    "coords_ref": [42.83, -108.73],
+    "date": "2021",
+    "description": "Nils is made an honorary member of the Shoshone tribe by shaman Willie LeClair, given the name meaning 'man who cares for birds.'",
+    "group": "wyoming-alaska"
+  },
+  {
+    "order": 8,
+    "id": "jackson-hole",
+    "chapter": "Jackson Hole",
+    "place": "Jackson Hole, Wyoming",
+    "coords_ref": [43.48, -110.76],
+    "date": null,
+    "description": "The One-Shot Competition crowd gathers at the Million Dollar Cowboy Bar, and Nils first raises the idea of helping Mexico.",
+    "group": "wyoming-alaska"
+  },
+  {
+    "order": 9,
+    "id": "rafting-ivishak",
+    "chapter": "Rafting the Ivishak",
+    "place": "Brooks Range, Alaska",
+    "coords_ref": [68.80, -148.50],
+    "date": "1986",
+    "description": "A five-day rafting trip through untouched Arctic wilderness, tracking caribou herds along the Ivishak River.",
+    "group": "wyoming-alaska"
+  },
+  {
+    "order": 10,
+    "id": "mount-mckinley",
+    "chapter": "Mount McKinley",
+    "place": "Yetna, Alaska",
+    "coords_ref": [62.53, -150.09],
+    "date": "1988",
+    "description": "A floatplane lands beside Denali; the group rafts through dangerously swollen rapids fed by melting ice.",
+    "group": "wyoming-alaska"
+  },
+  {
+    "order": 11,
+    "id": "wetback",
+    "chapter": "Wetback",
+    "place": "Rio Grande, US/Mexico border",
+    "coords_ref": [26.16, -98.32],
+    "date": "1969",
+    "description": "A casual swim across the Rio Grande turns Nils into an accidental 'wetback' — a story he tells with empathy for migrants.",
+    "group": "wyoming-alaska"
+  },
+  {
+    "order": 12,
+    "id": "laguna-flamingos",
+    "chapter": "Laguna Flamingos / La Pesca",
+    "place": "Tamaulipas, Mexico",
+    "coords_ref": [23.72, -97.83],
+    "date": "Present",
+    "description": "An emergency landing and gunfire from the ground make the cartel crisis impossible to ignore.",
+    "group": "present-mexico"
+  },
+  {
+    "order": 13,
+    "id": "washington-dc",
+    "chapter": "Washington, D.C.",
+    "place": "Washington, D.C.",
+    "coords_ref": [38.91, -77.04],
+    "date": "Present",
+    "description": "Nils consults with the U.S. Fish and Wildlife Service on how to focus his efforts for Mexico's environment.",
+    "group": "present-mexico"
+  },
+  {
+    "order": 14,
+    "id": "duranguenoproject",
+    "chapter": "The Duranguelño Project",
+    "place": "Durango, Mexico",
+    "coords_ref": [24.02, -104.65],
+    "date": null,
+    "description": "A failing ranch — larger than Liechtenstein — is turned into a model of conservation-based ecotourism.",
+    "group": "present-mexico"
+  },
+  {
+    "order": 15,
+    "id": "bio-park",
+    "chapter": "Bio Park",
+    "place": "Near Monterrey, Mexico",
+    "coords_ref": [25.55, -100.15],
+    "date": null,
+    "description": "Nils helps found a wildlife safari park, introducing city dwellers to conservation firsthand.",
+    "group": "present-mexico"
+  },
+  {
+    "order": 16,
+    "id": "sweden",
+    "chapter": "Sweden",
+    "place": "Stockholm, Sweden",
+    "coords_ref": [59.33, 18.07],
+    "date": "Present",
+    "description": "Flying to visit family in Sweden, Nils reflects on music, heritage, and his Viking roots.",
+    "group": "present-flight"
+  },
+  {
+    "order": 17,
+    "id": "iceland",
+    "chapter": "Iceland",
+    "place": "Thingvellir, Iceland",
+    "coords_ref": [64.26, -21.13],
+    "date": "2025",
+    "description": "A stopover at the site of the first Viking parliament, held at this tectonic rift in 920 AD.",
+    "group": "present-flight"
+  },
+  {
+    "order": 18,
+    "id": "the-seine-white-cliffs",
+    "chapter": "The Seine / White Cliffs / Flanders Fields",
+    "place": "Paris, the English Channel, and Normandy",
+    "coords_ref": [49.35, 0.55],
+    "date": "Present (recalling an earlier trip)",
+    "description": "Flying over Europe, Nils recalls an earlier visit to the D-Day beaches and war cemeteries of Normandy.",
+    "group": "present-flight"
+  },
+  {
+    "order": 19,
+    "id": "2031",
+    "chapter": "2031",
+    "place": "Monterrey, Mexico",
+    "coords_ref": [25.69, -100.32],
+    "date": "2031",
+    "description": "An epilogue: the Mexico Nils dreamed of has recovered, and retirees and old friends return once more.",
+    "group": "resolution"
+  },
+  {
+    "order": 20,
+    "id": "russian-or-viking",
+    "chapter": "Russian or Viking",
+    "place": "Astrakhan, USSR",
+    "coords_ref": [46.35, 48.03],
+    "date": "1989",
+    "description": "A Soviet delegate recognizes Nils' Viking bloodline by his jawline alone — a Cold War story about Vikings who once rowed the Volga to the Caspian Sea.",
+    "group": "world-travels"
+  },
+  {
+    "order": 21,
+    "id": "little-pecan-island",
+    "chapter": "Little Pecan Island",
+    "place": "Louisiana, USA",
+    "coords_ref": [29.80, -92.50],
+    "date": "1981–1988",
+    "description": "An annual duck hunt where host Herman Taylor deliberately pairs Canadian, American, and Mexican conservation leaders together, quietly building international consensus.",
+    "group": "world-travels"
+  },
+  {
+    "order": 22,
+    "id": "miracle-loaves-and-fish",
+    "chapter": "Miracle Loaves & Fish",
+    "place": "Villa Santiago, Nuevo León, Mexico",
+    "coords_ref": [25.42, -100.15],
+    "date": "2015",
+    "description": "Armed criminals are found camping on Nils' property; he coordinates with the Mexican army to have them cleared out.",
+    "group": "world-travels"
+  },
+  {
+    "order": 23,
+    "id": "concorde-and-jimmy-stewart",
+    "chapter": "The Concorde and Jimmy Stewart",
+    "place": "Washington, D.C. to London (Atlantic crossing)",
+    "coords_ref": [51.51, -0.13],
+    "date": "1977",
+    "description": "Nils flies supersonic aboard the Concorde and finds himself seated near Jimmy Stewart.",
+    "group": "world-travels"
+  },
+  {
+    "order": 24,
+    "id": "queen-sylvias-double",
+    "chapter": "Queen Sylvia's Double",
+    "place": "New York City (World Trade Center site)",
+    "coords_ref": [40.71, -74.01],
+    "date": "2016",
+    "description": "Walking through Lower Manhattan with a newborn in a stroller, Nils recalls once meeting the Queen of Sweden.",
+    "group": "world-travels"
+  },
+  {
+    "order": 25,
+    "id": "cape-cod",
+    "chapter": "Cape Cod",
+    "place": "Wellfleet, Massachusetts",
+    "coords_ref": [41.93, -70.02],
+    "date": null,
+    "description": "A Duke fraternity reunion at Cape Cod Bay, where Nils tries — and struggles — to rally old friends around Mexico's cause.",
+    "group": "world-travels"
+  },
+  {
+    "order": 26,
+    "id": "thor-heyerdahl",
+    "chapter": "Thor Heyerdahl",
+    "place": "ITESM, Monterrey, Mexico",
+    "coords_ref": [25.65, -100.29],
+    "date": "1973",
+    "description": "Nils translates a lecture by the Norwegian explorer, learning that the Ra II raft may have landed at La Venta, Tabasco — evidence of transatlantic voyages long before Columbus.",
+    "group": "world-travels"
+  }
+]
+

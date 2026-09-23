@@ -27,5 +27,6 @@ export const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/bio', label: 'Biography' },
   { href: '/publications', label: 'Publications' },
+  { href: '/journey', label: 'The Journey' },
   { href: '/contact', label: 'Contact' },
 ];
