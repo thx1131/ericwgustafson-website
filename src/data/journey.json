@@ -132,7 +132,7 @@
   {
     "order": 14,
     "id": "duranguenoproject",
-    "chapter": "The Duranguelño Project",
+    "chapter": "The Durangueño Project",
     "place": "Durango, Mexico",
     "coords_ref": [24.02, -104.65],
     "date": null,
@@ -181,16 +181,6 @@
   },
   {
     "order": 19,
-    "id": "2031",
-    "chapter": "2031",
-    "place": "Monterrey, Mexico",
-    "coords_ref": [25.69, -100.32],
-    "date": "2031",
-    "description": "An epilogue: the Mexico Nils dreamed of has recovered, and retirees and old friends return once more.",
-    "group": "resolution"
-  },
-  {
-    "order": 20,
     "id": "russian-or-viking",
     "chapter": "Russian or Viking",
     "place": "Astrakhan, USSR",
@@ -200,7 +190,7 @@
     "group": "world-travels"
   },
   {
-    "order": 21,
+    "order": 20,
     "id": "little-pecan-island",
     "chapter": "Little Pecan Island",
     "place": "Louisiana, USA",
@@ -210,7 +200,7 @@
     "group": "world-travels"
   },
   {
-    "order": 22,
+    "order": 21,
     "id": "miracle-loaves-and-fish",
     "chapter": "Miracle Loaves & Fish",
     "place": "Villa Santiago, Nuevo León, Mexico",
@@ -220,7 +210,7 @@
     "group": "world-travels"
   },
   {
-    "order": 23,
+    "order": 22,
     "id": "concorde-and-jimmy-stewart",
     "chapter": "The Concorde and Jimmy Stewart",
     "place": "Washington, D.C. to London (Atlantic crossing)",
@@ -230,7 +220,7 @@
     "group": "world-travels"
   },
   {
-    "order": 24,
+    "order": 23,
     "id": "queen-sylvias-double",
     "chapter": "Queen Sylvia's Double",
     "place": "New York City (World Trade Center site)",
@@ -240,7 +230,7 @@
     "group": "world-travels"
   },
   {
-    "order": 25,
+    "order": 24,
     "id": "cape-cod",
     "chapter": "Cape Cod",
     "place": "Wellfleet, Massachusetts",
@@ -250,7 +240,7 @@
     "group": "world-travels"
   },
   {
-    "order": 26,
+    "order": 25,
     "id": "thor-heyerdahl",
     "chapter": "Thor Heyerdahl",
     "place": "ITESM, Monterrey, Mexico",
@@ -258,6 +248,16 @@
     "date": "1973",
     "description": "Nils translates a lecture by the Norwegian explorer, learning that the Ra II raft may have landed at La Venta, Tabasco — evidence of transatlantic voyages long before Columbus.",
     "group": "world-travels"
+  },
+  {
+    "order": 26,
+    "id": "2031",
+    "chapter": "2031",
+    "place": "Monterrey, Mexico",
+    "coords_ref": [25.69, -100.32],
+    "date": "2031",
+    "description": "An epilogue: the Mexico Nils dreamed of has recovered, and retirees and old friends return once more.",
+    "group": "resolution"
   }
 ]
 
