@@ -1,6 +1,6 @@
 # Documento de Traspaso — Sitio de Eric Gustafson
 
-**Fecha:** 4 de septiembre, 2026 — última actualización 23 de septiembre, 2026 (por Claude Code, cotejado contra el repo real, la API de Cloudflare, el DNS y el sitio en vivo)
+**Fecha:** 4 de septiembre, 2026 — última actualización 25 de septiembre, 2026 (por Claude Code, cotejado contra el repo real, la API de Cloudflare, el DNS y el sitio en vivo)
 **Preparado por:** Luis Alberto Gálvez López (editor / gestor del proyecto)
 **Proyecto:** Sitio de autor para Eric Gustafson, promoción de *Mexico Viking*
 
@@ -23,6 +23,10 @@
 > 2. **🚨 Se encontró el pipeline de deploy de Cloudflare Pages completamente roto** — no por nada de este repo, sino porque el **build command del proyecto en el dashboard de Cloudflare había sido cambiado a `python3 build/build_site_v2.py`**, un script que no existe en este proyecto (es Astro/npm, no Python). Confirmado vía la API de Cloudflare que esto rompía el build al 100% desde el primer intento de deploy de hoy — y que **todos los deploys entre el 4 y el 7 de septiembre corrían bien con `npm run build`**, así que el cambio ocurrió en algún punto entre el 7 y el 23 de septiembre, sin relación con ningún commit del repo (es config de dashboard, no de código). **No se identificó quién o qué lo cambió** — queda como pregunta abierta, ver sección 7.
 > 3. **Ya corregido por Luis en el dashboard** (Settings → Builds): build command de vuelta a `npm run build`, output dir `dist`. Deploy reintentado y confirmado exitoso vía API — el "canonical deployment" (el que sirve tráfico real) ya es el commit de hoy. **Verificado en el sitio en vivo:** la foto de Eric se ve en `/bio` y "The Voyages of Nils" funciona completo en `/journey`, ambos en `ericwgustafson-website.pages.dev`.
 > 4. **Dominio propio parcialmente conectado:** Luis agregó `www.ericwgustafson.com` como custom domain en Cloudflare Pages — **activo, con SSL, confirmado sirviendo el sitio correctamente**. La zona ya estaba delegada a Cloudflare desde antes (nameservers correctos, sin registros DNS previos que estorbaran). **Falta el dominio raíz** `ericwgustafson.com` (sin `www`) — hoy no está configurado y muestra error de conexión al visitarlo directo. Hay que decidir: ¿agregar también el apex como custom domain, con redirect a `www`, o dejar `www` como la única entrada válida?
+>
+> **Actualización del 25 de septiembre:**
+> 1. **Ajustes al mapa "The Voyages of Nils"** (`src/data/journey.json`): se corrigió el typo "The Duranguelño Project" → "The Durangueño Project" (parada `duranguenoproject`), y se reordenó el grupo `world-travels` para que "2031" (el epílogo) quede como la última parada (orden 26) en vez de interrumpirlo a la mitad (antes era la 19). Las coordenadas en `journeyPositions.json` están indexadas por `id`, no por `order`, así que no hubo que tocarlas. Commit `c7bf5ba`, ya en `origin/main` y desplegado.
+> 2. **Nota sobre autenticación de `gh` en esta máquina:** el primer intento de `git push` de este cambio falló con 403 porque la cuenta activa de `gh` era `sistemaskmmp` (usada para trabajo de otro proyecto, sin permiso sobre este repo). Se cambió la cuenta activa a `thx1131` con `gh auth switch --user thx1131` — **cambio persistente a nivel de máquina**, confirmado por Luis: `thx1131` debe quedar como la cuenta activa para este repo, y `sistemaskmmp` es de otro proyecto, no relacionado. Si en el futuro un push falla con "Permission denied" a un usuario distinto de `thx1131`, correr `gh auth switch --user thx1131` antes de reintentar.
 
 ---
 
@@ -198,6 +202,7 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 ## 8. Accesos y recursos
 
 - **Repo GitHub**: `github.com/thx1131/ericwgustafson-website`
+- **Cuenta de `gh` para hacer push desde esta máquina**: `thx1131` — esta máquina tiene además la cuenta `sistemaskmmp` guardada en `gh` (de otro proyecto de Luis, sin acceso a este repo); si `gh auth status` muestra `sistemaskmmp` como activa, correr `gh auth switch --user thx1131` antes de hacer `git push` (ver actualización del 25 de septiembre)
 - **Cloudflare Pages**: proyecto `ericwgustafson-website`, cuenta de Luis (`thx1131@icloud.com`)
 - **Dominio propio**: `www.ericwgustafson.com` (activo desde el 23 de septiembre) — el apex sin `www` todavía no está conectado, ver sección 5
 - **Variables de ambiente**: `VITE_WHATSAPP_NUMBER` ya configurada con el valor real (`528180533791`) directo en Cloudflare Pages desde el 2026-09-05. `VITE_AUTHOR_EMAIL` sigue como placeholder — falta confirmar y cargar el email real, en el mismo lugar (Cloudflare Pages → Settings → Environment variables)
