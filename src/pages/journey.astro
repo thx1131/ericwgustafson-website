@@ -500,8 +500,36 @@ const firstPosition = positions[firstStop.id];
       margin-top: var(--space-lg);
     }
 
+    .control-button {
+      padding: 12px 4px;
+      min-height: 44px;
+      font-size: 1rem;
+    }
+
+    .stop-count {
+      font-size: 0.85rem;
+    }
+
     .timeline__list {
       padding: 0 var(--space-md);
+      grid-auto-columns: minmax(136px, 1fr);
+      scroll-snap-type: x proximity;
+    }
+
+    .timeline__item {
+      scroll-snap-align: start;
+    }
+
+    .timeline__stop {
+      padding: 14px 12px;
+    }
+
+    .timeline__number {
+      font-size: 0.8rem;
+    }
+
+    .timeline__chapter {
+      font-size: 1.02rem;
     }
   }
 
