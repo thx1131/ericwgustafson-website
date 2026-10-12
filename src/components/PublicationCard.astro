@@ -15,8 +15,10 @@ interface Props {
 }
 
 const { publication, compact = false } = Astro.props;
-const amazonLink =
-  publication.amazon?.paperback || publication.amazon?.kindle || publication.amazon?.audiobook;
+const formatLabels = { paperback: 'Paperback', kindle: 'Kindle', audiobook: 'Audiobook' };
+const amazonLinks = Object.entries(formatLabels)
+  .map(([format, label]) => ({ label, href: publication.amazon?.[format] }))
+  .filter((link) => link.href);
 
 const badgeText = {
   available: 'Available',
@@ -60,10 +62,19 @@ const badgeClass = {
     }
 
     {
-      publication.status === 'available' && amazonLink && (
-        <a class="btn btn-primary" href={amazonLink} target="_blank" rel="noopener noreferrer">
-          Buy on Amazon
-        </a>
+      publication.status === 'available' && amazonLinks.length > 0 && (
+        <div class="publication-card__actions">
+          {amazonLinks.map((link, i) => (
+            <a
+              class={`btn ${i === 0 ? 'btn-primary' : 'btn-secondary'}`}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {amazonLinks.length > 1 ? `Buy ${link.label}` : 'Buy on Amazon'}
+            </a>
+          ))}
+        </div>
       )
     }
 
@@ -146,8 +157,10 @@ const badgeClass = {
     color: var(--color-text-muted);
   }
 
-  .publication-card .btn {
-    align-self: flex-start;
+  .publication-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
     margin-top: var(--space-sm);
   }
 
