@@ -1,6 +1,6 @@
 # Documento de Traspaso — Sitio de Eric Gustafson
 
-**Fecha:** 4 de septiembre, 2026 — última actualización 25 de septiembre, 2026 (por Claude Code, cotejado contra el repo real, la API de Cloudflare, el DNS y el sitio en vivo)
+**Fecha:** 4 de septiembre, 2026 — última actualización 12 de octubre, 2026 (por Claude Code, cotejado contra el repo real, la API de Cloudflare, el DNS y el sitio en vivo)
 **Preparado por:** Luis Alberto Gálvez López (editor / gestor del proyecto)
 **Proyecto:** Sitio de autor para Eric Gustafson, promoción de *Mexico Viking*
 
@@ -28,6 +28,14 @@
 > 1. **Ajustes al mapa "The Voyages of Nils"** (`src/data/journey.json`): se corrigió el typo "The Duranguelño Project" → "The Durangueño Project" (parada `duranguenoproject`), y se reordenó el grupo `world-travels` para que "2031" (el epílogo) quede como la última parada (orden 26) en vez de interrumpirlo a la mitad (antes era la 19). Las coordenadas en `journeyPositions.json` están indexadas por `id`, no por `order`, así que no hubo que tocarlas. Commit `c7bf5ba`, ya en `origin/main` y desplegado.
 > 2. **Nota sobre autenticación de `gh` en esta máquina:** el primer intento de `git push` de este cambio falló con 403 porque la cuenta activa de `gh` era `sistemaskmmp` (usada para trabajo de otro proyecto, sin permiso sobre este repo). Se cambió la cuenta activa a `thx1131` con `gh auth switch --user thx1131` — **cambio persistente a nivel de máquina**, confirmado por Luis: `thx1131` debe quedar como la cuenta activa para este repo, y `sistemaskmmp` es de otro proyecto, no relacionado. Si en el futuro un push falla con "Permission denied" a un usuario distinto de `thx1131`, correr `gh auth switch --user thx1131` antes de reintentar.
 
+>
+> **Actualización del 11-12 de octubre — *Mexico Viking* ya está a la venta en Amazon:**
+> 1. **Links de compra reales** en `src/data/publications.json` (verificados abriendo cada página de Amazon): *Mexico Viking* paperback `https://www.amazon.com/dp/B0HMM8ZHDV` (ISBN 9798170482047) y Kindle `https://www.amazon.com/dp/B0HMLVY1FC`; *Joe and Running Bear* paperback `https://www.amazon.com/dp/B098GSP2DR` (antes link corto `a.co`) y Kindle `https://www.amazon.com/dp/B097WGMDRH`. Ya no queda ningún placeholder `XXXXX`.
+> 2. **Dos botones por libro** ("Buy Paperback" principal, "Buy Kindle" secundario) mediante el componente nuevo `src/components/BuyButtons.astro`, que lee los links de `publications.json`. Si un título solo tiene un formato, muestra un único "Buy on Amazon". Lo usan `PublicationCard.astro`, el hero y "About the Book" de la portada, y una franja nueva al final de `/journey` ("Read the full story in *Mexico Viking*"). En el hero, "View Publications" y "About the Author" pasaron a links de texto debajo de los botones de compra.
+> 3. **Mapa "The Voyages of Nils" en orden cronológico** (`src/data/journey.json`, solo cambia `order`): flashbacks fechados de 1957 a 2021, luego las paradas del presente del libro (2024–2025) en el orden de la trama, y "2031" al final. A Cape Cod se le puso fecha `2024` (el manuscrito V4.1 dice "Told at Cape Cod, 2024"). **Por confirmar con Eric:** el año de las paradas sin fecha — Eugenio Garza-Sada (colocada entre 1969 y 1973 por inferencia), Shoshone Country, Jackson Hole, The Durangueño Project y Bio Park (estas dos quedaron al final del presente porque el libro no las fecha).
+> 4. **Diferencias con la ficha de Amazon, sin tocar:** Amazon muestra el subtítulo "Viking's memoir tackling Mexico's Environmental challenges" (el sitio y la portada dicen "A Viking's Memoir on Mexico's Environmental Challenges") y 177 páginas en paperback (el sitio dice 178).
+> 5. **`gh` volvió a estar en la cuenta equivocada** (`sistemaskmmp` activa): se cambió con `gh auth switch --user thx1131`. Verificar siempre antes de un push.
+> 6. **Limpieza de la libreta de contactos de Eric (trabajo fuera del sitio, solo en local):** la carpeta `Contactos/` contiene un export de Google Contacts y **está en `.gitignore` — nunca debe subirse (el repo es público)**. El 93 % de la libreta (9,113 de 9,764 fichas) había sido alterado por la app de rastreo de correos TrackApp.io: nombre "Track" y sufijo `.trackapp.io` en cada correo. En `Contactos/limpio/` quedaron: `google_contactos_limpios.csv` (5,275 contactos; los restaurados llevan la etiqueta "Recuperados Track"), `brevo_contactos.csv` (5,077 correos únicos con columnas ORIGEN y TIPO), `revisar.csv` (casos dudosos, sobre todo 59 teléfonos sin clave de país que no se tocaron), `fusionados.csv` (372 fusiones por nombre idéntico), `excluidos_automaticos.csv` y `libro_vs_contactos.csv` (personas nombradas en el libro que están en la libreta: 60 coincidencias exactas, 51 con correo). **Pendiente, todo manual y aún sin hacer:** revocar el acceso de TrackApp.io en la cuenta de Google de Eric y quitar la extensión, revisar `revisar.csv` y `fusionados.csv`, borrar e importar en Google Contacts, e importar a Brevo (los correos recuperados son de gente que nunca se suscribió: importar como lista aparte y no enviar campaña masiva de golpe).
 ---
 
 ## 1. Contexto
@@ -139,7 +147,7 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 
 ### 🟡 Importante, no bloqueante
 2. **CMS headless (Decap CMS)** — aún no se ha instalado. Definir primero: ¿quién edita? (¿Eric directo, requiere GitHub, o alternativa con login simple?). Alcance propuesto: editable = textos de bio, datos de publicaciones (precio, estado, links, portadas). NO editable vía CMS = colores/tipografía (decisión de diseño fija)
-3. **Link de Amazon Kindle** faltante para *Mexico Viking* y *Joe and Running Bear* (solo se tienen paperback confirmados; Kindle de Mexico Viking es placeholder `XXXXX`)
+3. ~~Link de Amazon Kindle faltante para *Mexico Viking* y *Joe and Running Bear*~~ — resuelto el 2026-10-11, ver actualización del 11-12 de octubre
 4. **Confirmar email definitivo** para la página de Contacto (aún placeholder `eric@example.com` en `.env.example`/Cloudflare — el WhatsApp ya se resolvió el 2026-09-05)
 5. **Terminar de conectar el dominio propio** — `www.ericwgustafson.com` ya está activo (23 de septiembre), pero el apex `ericwgustafson.com` (sin `www`) todavía no está configurado y da error al visitarlo. Decidir: ¿agregar el apex también como custom domain con redirect a `www`, o dejarlo así? (la mayoría de sitios quieren que ambas formas funcionen)
 6. **Sección "Selected Writings" con imágenes** — decidir si se deja como cards con portada (estado actual, ya con las 10 portadas subidas) o se vuelve a la lista bibliográfica sin imágenes que pedía el `ADDENDUM_PUBLICATIONS.md` original
@@ -160,6 +168,9 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 - ~~Revocar/reemplazar el token de GitHub embebido en texto plano en `.git/config`~~ — hecho el 2026-09-23: el remoto ahora es una URL limpia, autenticado vía `gh auth login`
 - ~~Arreglar el build command de Cloudflare Pages (roto con un script de Python inexistente)~~ — hecho el 2026-09-23, ver sección 2
 - ~~Conectar `www.ericwgustafson.com` como dominio propio~~ — hecho el 2026-09-23 (activo, con SSL) — el apex sin `www` sigue pendiente, ver 🟡 punto 5
+- ~~Poner los links reales de Amazon (paperback y Kindle) de *Mexico Viking* y *Joe and Running Bear*~~ — hecho el 2026-10-11, con dos botones por libro
+- ~~Vía de compra visible en la portada y en `/journey`~~ — hecho el 2026-10-11 (`BuyButtons.astro`)
+- ~~Ordenar cronológicamente el mapa "The Voyages of Nils"~~ — hecho el 2026-10-12
 
 ### 🟢 Futuro / fase 2
 10. ~~Mapa interactivo de los viajes de Nils~~ — **construido el 22 de septiembre** (`/journey`, "The Voyages of Nils"), ver sección 3.1. Queda como pendiente real, no de construcción sino de despliegue (🔴 punto 1) y una decisión de diseño: la parada "Russian or Viking" (Astrakhan) cae fuera del área que dibuja el mapa ilustrado — falta decidir si se extiende el mapa hacia el este o se deja como aproximación artística.
@@ -221,7 +232,9 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 4. Decidir el destino del GitHub Action de deploy: cargar los secrets de Cloudflare en GitHub para que funcione de punta a punta, o eliminarlo si la integración nativa de Cloudflare es suficiente
 5. Confirmar el email real y cargarlo como `VITE_AUTHOR_EMAIL` en Cloudflare Pages (mismo mecanismo ya usado para el WhatsApp)
 6. Decidir el destino de la parada "Russian or Viking" en el mapa del Journey (¿extender el mapa hacia el este o dejar la aproximación actual?) — ver sección 5, punto 🟢 10
-7. Retomar backlog 🟡 restante (CMS, links de Kindle, decisión sobre imágenes en "Selected Writings")
+7. Retomar backlog 🟡 restante (CMS, decisión sobre imágenes en "Selected Writings")
+8. Confirmar con Eric los años de las cinco paradas sin fecha del Journey (Eugenio Garza-Sada, Shoshone Country, Jackson Hole, The Durangueño Project, Bio Park) y reubicarlas si hace falta
+9. Terminar la limpieza de contactos de Eric: revocar TrackApp.io, revisar los archivos de `Contactos/limpio/`, reimportar en Google Contacts e importar a Brevo — ver actualización del 11-12 de octubre, punto 6
 
 ---
 

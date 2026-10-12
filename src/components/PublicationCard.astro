@@ -1,4 +1,6 @@
 ---
+import BuyButtons from './BuyButtons.astro';
+
 interface Props {
   publication: {
     id: string;
@@ -15,10 +17,7 @@ interface Props {
 }
 
 const { publication, compact = false } = Astro.props;
-const formatLabels = { paperback: 'Paperback', kindle: 'Kindle', audiobook: 'Audiobook' };
-const amazonLinks = Object.entries(formatLabels)
-  .map(([format, label]) => ({ label, href: publication.amazon?.[format] }))
-  .filter((link) => link.href);
+const hasAmazonLink = Object.values(publication.amazon ?? {}).some(Boolean);
 
 const badgeText = {
   available: 'Available',
@@ -62,18 +61,9 @@ const badgeClass = {
     }
 
     {
-      publication.status === 'available' && amazonLinks.length > 0 && (
+      publication.status === 'available' && hasAmazonLink && (
         <div class="publication-card__actions">
-          {amazonLinks.map((link, i) => (
-            <a
-              class={`btn ${i === 0 ? 'btn-primary' : 'btn-secondary'}`}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {amazonLinks.length > 1 ? `Buy ${link.label}` : 'Buy on Amazon'}
-            </a>
-          ))}
+          <BuyButtons amazon={publication.amazon} />
         </div>
       )
     }

@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PublicationCard from '../components/PublicationCard.astro';
+import BuyButtons from '../components/BuyButtons.astro';
 import publications from '../data/publications.json';
 
 const featured = publications.find((p) => p.status === 'available');
@@ -23,8 +24,11 @@ const featured = publications.find((p) => p.status === 'available');
           reflection on the country's natural future.
         </p>
         <div class="hero__actions">
-          <a class="btn btn-primary" href="/publications">View Publications</a>
-          <a class="btn btn-secondary" href="/bio">About the Author</a>
+          <BuyButtons amazon={featured?.amazon} />
+        </div>
+        <div class="hero__links">
+          <a href="/publications">View Publications</a>
+          <a href="/bio">About the Author</a>
         </div>
       </div>
       {
@@ -46,9 +50,10 @@ const featured = publications.find((p) => p.status === 'available');
           </div>
           <div class="book-highlight">
             <p>{featured.description}</p>
-            <a class="btn btn-secondary" href="/publications">
-              Read More
-            </a>
+            <div class="book-highlight__actions">
+              <BuyButtons amazon={featured.amazon} />
+              <a class="book-highlight__more" href="/publications">Read More</a>
+            </div>
           </div>
         </div>
       </section>
@@ -107,6 +112,26 @@ const featured = publications.find((p) => p.status === 'available');
     margin-top: var(--space-lg);
   }
 
+  .hero__links {
+    display: flex;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+    margin-top: var(--space-md);
+  }
+
+  .hero__links a,
+  .book-highlight__more {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .hero__links a:hover,
+  .book-highlight__more:hover {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+  }
+
   .hero__cover {
     background: var(--color-bg-muted);
     border-radius: var(--radius);
@@ -124,6 +149,14 @@ const featured = publications.find((p) => p.status === 'available');
 
   .book-highlight {
     max-width: 70ch;
+  }
+
+  .book-highlight__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: var(--space-lg);
   }
 
   .latest-book {

@@ -1,0 +1,24 @@
+---
+interface Props {
+  amazon?: { paperback?: string | null; kindle?: string | null; audiobook?: string | null } | null;
+}
+
+const { amazon } = Astro.props;
+const formatLabels = { paperback: 'Paperback', kindle: 'Kindle', audiobook: 'Audiobook' };
+const links = Object.entries(formatLabels)
+  .map(([format, label]) => ({ label, href: amazon?.[format] }))
+  .filter((link) => link.href);
+---
+
+{
+  links.map((link, i) => (
+    <a
+      class={`btn ${i === 0 ? 'btn-primary' : 'btn-secondary'}`}
+      href={link.href}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {links.length > 1 ? `Buy ${link.label}` : 'Buy on Amazon'}
+    </a>
+  ))
+}

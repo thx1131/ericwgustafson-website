@@ -158,3 +158,6 @@ Thumbs.db
 
 # Local-only planning notes (not needed by GitHub/the build)
 BRIEF_CLAUDE_CODE_REDISENO.md
+
+# Datos personales (libreta de contactos) — nunca al repo
+Contactos/

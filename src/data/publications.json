@@ -29,13 +29,13 @@
     "description": "A novel for young readers centered on outdoor survival and true adventure.",
     "status": "available",
     "amazon": {
-      "paperback": "https://a.co/d/0bBIWLOF",
-      "kindle": null
+      "paperback": "https://www.amazon.com/dp/B098GSP2DR",
+      "kindle": "https://www.amazon.com/dp/B097WGMDRH"
     },
     "image": "/images/joe-and-running-bear-cover.webp",
     "genres": ["Novel", "Youth", "Adventure"],
     "pages": null,
-    "formats": ["Paperback"]
+    "formats": ["Paperback", "Kindle"]
   },
   {
     "id": "laguna-flamingos",
