@@ -31,9 +31,16 @@ function isActive(href) {
   .nav__list {
     list-style: none;
     display: flex;
-    gap: var(--space-lg);
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-lg);
     margin: 0;
     padding: 0;
+  }
+
+  @media (max-width: 480px) {
+    .nav__list {
+      column-gap: var(--space-md);
+    }
   }
 
   .nav__link {
@@ -43,6 +50,7 @@ function isActive(href) {
     color: var(--color-text);
     border-bottom: 1px solid transparent;
     padding-bottom: 2px;
+    white-space: nowrap;
   }
 
   .nav__link:hover {
