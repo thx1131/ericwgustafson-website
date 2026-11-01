@@ -1,6 +1,6 @@
 # Documento de Traspaso — Sitio de Eric Gustafson
 
-**Fecha:** 4 de septiembre, 2026 — última actualización 12 de octubre, 2026 (por Claude Code, cotejado contra el repo real, la API de Cloudflare, el DNS y el sitio en vivo)
+**Fecha:** 4 de septiembre, 2026 — última actualización 31 de octubre, 2026 (por Claude Code, cotejado contra el repo real, la API de Cloudflare, el DNS y el sitio en vivo)
 **Preparado por:** Luis Alberto Gálvez López (editor / gestor del proyecto)
 **Proyecto:** Sitio de autor para Eric Gustafson, promoción de *Mexico Viking*
 
@@ -36,6 +36,24 @@
 > 4. **Diferencias con la ficha de Amazon, sin tocar:** Amazon muestra el subtítulo "Viking's memoir tackling Mexico's Environmental challenges" (el sitio y la portada dicen "A Viking's Memoir on Mexico's Environmental Challenges") y 177 páginas en paperback (el sitio dice 178).
 > 5. **`gh` volvió a estar en la cuenta equivocada** (`sistemaskmmp` activa): se cambió con `gh auth switch --user thx1131`. Verificar siempre antes de un push.
 > 6. **Limpieza de la libreta de contactos de Eric (trabajo fuera del sitio, solo en local):** la carpeta `Contactos/` contiene un export de Google Contacts y **está en `.gitignore` — nunca debe subirse (el repo es público)**. El 93 % de la libreta (9,113 de 9,764 fichas) había sido alterado por la app de rastreo de correos TrackApp.io: nombre "Track" y sufijo `.trackapp.io` en cada correo. En `Contactos/limpio/` quedaron: `google_contactos_limpios.csv` (5,275 contactos; los restaurados llevan la etiqueta "Recuperados Track"), `brevo_contactos.csv` (5,077 correos únicos con columnas ORIGEN y TIPO), `revisar.csv` (casos dudosos, sobre todo 59 teléfonos sin clave de país que no se tocaron), `fusionados.csv` (372 fusiones por nombre idéntico), `excluidos_automaticos.csv` y `libro_vs_contactos.csv` (personas nombradas en el libro que están en la libreta: 60 coincidencias exactas, 51 con correo). **Pendiente, todo manual y aún sin hacer:** revocar el acceso de TrackApp.io en la cuenta de Google de Eric y quitar la extensión, revisar `revisar.csv` y `fusionados.csv`, borrar e importar en Google Contacts, e importar a Brevo (los correos recuperados son de gente que nunca se suscribió: importar como lista aparte y no enviar campaña masiva de golpe).
+>
+> **Actualización del 31 de octubre — el Journey rediseñado para móvil, el deploy simplificado y una lista nueva de Brevo:**
+> 1. **El mapa "The Voyages of Nils" se rediseñó para móvil.** Todo está en `src/pages/journey.astro`, publicado y verificado en vivo (commits `8b3f4db`, `a52ffa0` y `3d1aa9c`):
+>    - **Controles:** en celular y tablet, una barra fija abajo con botones redondos ◀ ▶, barra de progreso y contador. La barra se oculta al llegar a la sección de compra y ya no sube ni baja al cambiar de parada (el panel de texto tiene una altura fija, la de la parada más larga). También se puede navegar deslizando el dedo sobre el mapa o el panel ("Swipe to sail") y con las flechas del teclado.
+>    - **Cámara que sigue al barco:** en pantallas chicas el mapa hace zoom (2.2× en celular, 1.7× en tablet) y se desplaza con el barco. Un botón alterna entre "Full route" y "Follow the ship".
+>    - **Ruta dibujada paso a paso:** cada vez que se avanza una parada, la línea nueva se dibuja detrás del barco. La ruta forma una "telaraña" porque el orden es cronológico, no geográfico.
+>    - **Puntos del mapa tocables:** al tocar un punto se va a esa parada. Si en un mismo lugar hay varias paradas (México, Costa Este), se abre un menú para elegir. Los puntos no llevan número porque a Luis no le gustó el contador.
+>    - **Pantalla final:** con "Finish ⚑" se cierra el viaje y aparecen la portada, el texto "You sailed all 26 stops with Nils", los botones de compra y "Sail again from the start". **El texto de esa pantalla lo redactó Claude: falta que Eric lo revise.**
+>    - **Orden geográfico descartado:** se probó un orden de "vuelta al mundo" en lugar del cronológico. Luis lo descartó y el mapa sigue en orden cronológico.
+>    - **Menú del sitio:** `Nav.astro` ahora pasa a dos renglones en pantallas angostas. Antes "Contact" se salía de la pantalla y toda la página se desplazaba de lado en celular.
+> 2. **Se eliminó el GitHub Action de deploy** (`.github/workflows/deploy.yml`, commit `c512138`). Era redundante: nunca funcionó porque no tenía los secrets de Cloudflare. El sitio lo despliega solo la integración nativa de Cloudflare Pages, conectada al repo `thx1131/ericwgustafson-website`, rama `main`, en la cuenta de Cloudflare `thx1131@icloud.com`. Cada push a `main` se publica en 1–2 minutos. Así se cierran el pendiente 🔴 1 y la pregunta abierta sobre el Action.
+> 3. **El dominio raíz `ericwgustafson.com` (sin `www`) ya funciona:** al revisarlo hoy respondió HTTP 200 y sirve el sitio. Se cierra el pendiente 🟡 5.
+> 4. **Lista nueva de Brevo con los contactos que marcó Eric** (fuera del sitio, solo en local, dentro de `Contactos/`, que está en `.gitignore`). Se generaron tres archivos en `Contactos/limpio/`:
+>    - `brevo_lista2.csv`: 382 correos de las celdas que Eric resaltó en amarillo en los dos xlsx de `Contactos/Lista 2`.
+>    - `brevo_lista2_mano.csv`: 43 correos de las dos listas escritas a mano (fotos HEIC). Se corrigieron contra la libreta los que tenían errores de lectura. 8 de ellos también están en el xlsx.
+>    - `lista2_revisar.csv`: 40 casos dudosos, entre ellos una lectura ambigua de la letra de Eric y tres correos escritos a mano que no aparecen en la libreta. Los detalles están en el archivo, no en este documento, porque el repo es público.
+>    - Ninguna lista se ha importado todavía a Brevo.
+> 5. **Carpetas sin rastrear que no deben subirse al repo:** `Assets_interactivos/`, `Publicacion/`, `INVESTIGAR_SECRETO_EXPUESTO.md`, `journey.json` y `journey (1).json` (estos dos están en la raíz y no son el `src/data/journey.json` que usa el sitio). Al hacer commit, agregar solo los archivos concretos, nunca `git add -A`.
 ---
 
 ## 1. Contexto
@@ -55,10 +73,10 @@ Sitio de autor para Eric Gustafson, construido para dar salida comercial a *Mexi
 |---|---|
 | **Repo** | `github.com/thx1131/ericwgustafson-website` — activo, main branch |
 | **Hosting** | Cloudflare Pages, proyecto `ericwgustafson-website` |
-| **URL en vivo** | https://ericwgustafson-website.pages.dev/ y https://www.ericwgustafson.com/ — ambas confirmadas accesibles con el contenido más reciente (23 de septiembre) |
-| **Dominio propio** | `www.ericwgustafson.com` **activo desde el 23 de septiembre** (SSL válido, confirmado sirviendo el sitio). El apex `ericwgustafson.com` (sin `www`) todavía no está configurado — muestra error al visitarlo directo. Zona ya delegada a Cloudflare desde antes. |
+| **URL en vivo** | https://www.ericwgustafson.com/, https://ericwgustafson.com/ y https://ericwgustafson-website.pages.dev/ — las tres verificadas el 31 de octubre |
+| **Dominio propio** | `www.ericwgustafson.com` activo desde el 23 de septiembre. El apex `ericwgustafson.com` (sin `www`) también funciona: el 31 de octubre respondió HTTP 200 y sirve el sitio. |
 | **Stack** | Astro (`^7.2.0`), sitio 100% estático (`output: 'static'`), sin adaptador SSR |
-| **CI/CD** | **Dos mecanismos distintos y desalineados hasta hoy** — ver nota abajo. Ya corregido. |
+| **CI/CD** | **Solo la integración nativa Git de Cloudflare Pages** (cada push a `main` se publica). El GitHub Action redundante se eliminó el 31 de octubre (commit `c512138`). La nota de abajo queda como historial. |
 | **Editor asistente** | Claude Code corriendo en Linux, conectado al repo local |
 
 **Nota técnica resuelta:** se descartó el adaptador `@astrojs/cloudflare` por generar conflicto de versiones con Astro; el sitio no necesita SSR para su alcance actual (bio, contacto, publicaciones son contenido estático).
@@ -143,13 +161,13 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 *(Corregida — la mayoría de los puntos 🔴 originales ya estaban resueltos; se archivaron abajo y se agregó el hallazgo real de CI/CD.)*
 
 ### 🔴 Crítico / siguiente paso inmediato
-1. **Configurar los secrets de Cloudflare en GitHub** (`Settings → Secrets and variables → Actions` del repo) para que el GitHub Action de deploy funcione de punta a punta: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, y opcionalmente `AUTHOR_EMAIL`/`WHATSAPP_NUMBER` (hoy los 4 están vacíos — confirmado vía API, `total_count: 0`). Sin esto, el Action seguirá fallando en el paso de deploy aunque el build ya compile. El sitio en vivo no depende de esto (lo sirve la integración nativa de Cloudflare), pero mientras no se resuelva, cada push seguirá marcando ❌ en GitHub — hay que decidir si vale la pena mantener este Action redundante o eliminarlo.
+1. ~~**Configurar los secrets de Cloudflare en GitHub**~~ — **resuelto el 31 de octubre: se eliminó el Action en lugar de cargar los secrets** (commit `c512138`). Texto original: (`Settings → Secrets and variables → Actions` del repo) para que el GitHub Action de deploy funcione de punta a punta: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, y opcionalmente `AUTHOR_EMAIL`/`WHATSAPP_NUMBER` (hoy los 4 están vacíos — confirmado vía API, `total_count: 0`). Sin esto, el Action seguirá fallando en el paso de deploy aunque el build ya compile. El sitio en vivo no depende de esto (lo sirve la integración nativa de Cloudflare), pero mientras no se resuelva, cada push seguirá marcando ❌ en GitHub — hay que decidir si vale la pena mantener este Action redundante o eliminarlo.
 
 ### 🟡 Importante, no bloqueante
 2. **CMS headless (Decap CMS)** — aún no se ha instalado. Definir primero: ¿quién edita? (¿Eric directo, requiere GitHub, o alternativa con login simple?). Alcance propuesto: editable = textos de bio, datos de publicaciones (precio, estado, links, portadas). NO editable vía CMS = colores/tipografía (decisión de diseño fija)
 3. ~~Link de Amazon Kindle faltante para *Mexico Viking* y *Joe and Running Bear*~~ — resuelto el 2026-10-11, ver actualización del 11-12 de octubre
 4. **Confirmar email definitivo** para la página de Contacto (aún placeholder `eric@example.com` en `.env.example`/Cloudflare — el WhatsApp ya se resolvió el 2026-09-05)
-5. **Terminar de conectar el dominio propio** — `www.ericwgustafson.com` ya está activo (23 de septiembre), pero el apex `ericwgustafson.com` (sin `www`) todavía no está configurado y da error al visitarlo. Decidir: ¿agregar el apex también como custom domain con redirect a `www`, o dejarlo así? (la mayoría de sitios quieren que ambas formas funcionen)
+5. ~~**Terminar de conectar el dominio propio**~~ — **resuelto: el apex ya sirve el sitio (verificado el 31 de octubre).** Texto original: — `www.ericwgustafson.com` ya está activo (23 de septiembre), pero el apex `ericwgustafson.com` (sin `www`) todavía no está configurado y da error al visitarlo. Decidir: ¿agregar el apex también como custom domain con redirect a `www`, o dejarlo así? (la mayoría de sitios quieren que ambas formas funcionen)
 6. **Sección "Selected Writings" con imágenes** — decidir si se deja como cards con portada (estado actual, ya con las 10 portadas subidas) o se vuelve a la lista bibliográfica sin imágenes que pedía el `ADDENDUM_PUBLICATIONS.md` original
 
 ### ✅ Ya resuelto (archivado — estaba mal marcado como pendiente en la versión anterior de este documento)
@@ -171,6 +189,8 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 - ~~Poner los links reales de Amazon (paperback y Kindle) de *Mexico Viking* y *Joe and Running Bear*~~ — hecho el 2026-10-11, con dos botones por libro
 - ~~Vía de compra visible en la portada y en `/journey`~~ — hecho el 2026-10-11 (`BuyButtons.astro`)
 - ~~Ordenar cronológicamente el mapa "The Voyages of Nils"~~ — hecho el 2026-10-12
+- ~~Hacer usable el Journey en celular~~ — hecho el 2026-10-31: barra fija, swipe, cámara que sigue al barco, ruta dibujada paso a paso, puntos tocables y pantalla final
+- ~~Eliminar el GitHub Action de deploy redundante~~ — hecho el 2026-10-31
 
 ### 🟢 Futuro / fase 2
 10. ~~Mapa interactivo de los viajes de Nils~~ — **construido el 22 de septiembre** (`/journey`, "The Voyages of Nils"), ver sección 3.1. Queda como pendiente real, no de construcción sino de despliegue (🔴 punto 1) y una decisión de diseño: la parada "Russian or Viking" (Astrakhan) cae fuera del área que dibuja el mapa ilustrado — falta decidir si se extiende el mapa hacia el este o se deja como aproximación artística.
@@ -205,8 +225,8 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 - ✅ ~~Falta foto de Eric en el sitio en vivo~~ — resuelto y en vivo desde el 23 de septiembre, ver sección 3.1
 - ✅ ~~El remoto tiene un token de GitHub embebido en texto plano en `.git/config`~~ — **resuelto el 23 de septiembre**, de paso al arreglar el push: el remoto ahora es una URL limpia, autenticado vía `gh auth login` (credencial gestionada por `gh`, no texto plano en el repo). Nota: en el proceso, un token personal (`ghp_...`) se pegó directo en el chat de Claude Code para intentar el push — Claude Code bloqueó su uso por seguridad y se resolvió con `gh auth login` en su lugar, pero **ese token ahora aparece en el historial del chat** — vale la pena revocarlo en GitHub (Settings → Developer settings → Personal access tokens) aunque ya no se esté usando.
 - **🆕 Sin explicación: el build command de Cloudflare Pages se cambió a un script de Python inexistente entre el 7 y el 23 de septiembre**, sin ningún commit de por medio (es config de dashboard, no del repo) — esto rompió el pipeline de deploy en silencio. Ya corregido (ver sección 2), pero **no se identificó la causa ni quién lo cambió**. Vale la pena que Luis revise quién más tiene acceso al dashboard de Cloudflare de esa cuenta, por si fue un cambio manual accidental o una integración/herramienta con acceso de escritura que no debería tenerlo.
-- ¿Vale la pena mantener el GitHub Action de deploy si la integración nativa de Cloudflare ya cubre el despliegue? Si se decide que sí, falta cargar los secrets de Cloudflare en GitHub (ver sección 5, punto 🔴 1). Si se decide que no, se puede simplificar borrando `.github/workflows/deploy.yml` para dejar de depender de dos mecanismos en paralelo.
-- El apex `ericwgustafson.com` (sin `www`) todavía no está conectado — solo `www.ericwgustafson.com` funciona hoy (ver sección 5, punto 🟡 5)
+- ✅ ~~¿Vale la pena mantener el GitHub Action de deploy~~ Se decidió que no: se eliminó el 31 de octubre. si la integración nativa de Cloudflare ya cubre el despliegue? Si se decide que sí, falta cargar los secrets de Cloudflare en GitHub (ver sección 5, punto 🔴 1). Si se decide que no, se puede simplificar borrando `.github/workflows/deploy.yml` para dejar de depender de dos mecanismos en paralelo.
+- ✅ ~~El apex `ericwgustafson.com` (sin `www`) todavía no está conectado~~ — ya funciona (verificado el 31 de octubre)
 
 ---
 
@@ -215,7 +235,7 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 - **Repo GitHub**: `github.com/thx1131/ericwgustafson-website`
 - **Cuenta de `gh` para hacer push desde esta máquina**: `thx1131` — esta máquina tiene además la cuenta `sistemaskmmp` guardada en `gh` (de otro proyecto de Luis, sin acceso a este repo); si `gh auth status` muestra `sistemaskmmp` como activa, correr `gh auth switch --user thx1131` antes de hacer `git push` (ver actualización del 25 de septiembre)
 - **Cloudflare Pages**: proyecto `ericwgustafson-website`, cuenta de Luis (`thx1131@icloud.com`)
-- **Dominio propio**: `www.ericwgustafson.com` (activo desde el 23 de septiembre) — el apex sin `www` todavía no está conectado, ver sección 5
+- **Dominio propio**: `www.ericwgustafson.com` y `ericwgustafson.com`, los dos activos
 - **Variables de ambiente**: `VITE_WHATSAPP_NUMBER` ya configurada con el valor real (`528180533791`) directo en Cloudflare Pages desde el 2026-09-05. `VITE_AUTHOR_EMAIL` sigue como placeholder — falta confirmar y cargar el email real, en el mismo lugar (Cloudflare Pages → Settings → Environment variables)
 - **Manuscrito fuente**: `Mexico_Viking_-_V2.docx` (adjunto en el proyecto de Claude, contiene bibliografía completa en sección "Additional Publications" y bio de contraportada de *Joe and Running Bear*)
 - **Portada final**: `portada_v9.pdf` (referencia de subtítulo formal y diseño de portada — NO es el estilo visual del sitio)
@@ -224,17 +244,17 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 
 ## 9. Próximos pasos inmediatos (orden sugerido)
 
-*(Actualizado 23 de septiembre — foto, Journey, push y `www.ericwgustafson.com` ya resueltos, se quitan de la lista.)*
+*(Actualizado el 31 de octubre: el dominio raíz y el Action ya están resueltos y salieron de la lista.)*
 
-1. Conectar el apex `ericwgustafson.com` (sin `www`) como custom domain en Cloudflare Pages, o configurar un redirect desde ahí hacia `www` — ver sección 5, punto 🟡 5
-2. Revisar quién tiene acceso al dashboard de Cloudflare de la cuenta, para entender cómo se cambió el build command a un script de Python sin que nadie lo pidiera (ver sección 7)
-3. Revocar el token de GitHub (`ghp_...`) que se pegó en el chat de Claude Code durante la sesión del 22-23 de septiembre — ya no se usa (el remoto quedó limpio con `gh auth login`), pero sigue siendo válido y quedó expuesto en el historial
-4. Decidir el destino del GitHub Action de deploy: cargar los secrets de Cloudflare en GitHub para que funcione de punta a punta, o eliminarlo si la integración nativa de Cloudflare es suficiente
-5. Confirmar el email real y cargarlo como `VITE_AUTHOR_EMAIL` en Cloudflare Pages (mismo mecanismo ya usado para el WhatsApp)
-6. Decidir el destino de la parada "Russian or Viking" en el mapa del Journey (¿extender el mapa hacia el este o dejar la aproximación actual?) — ver sección 5, punto 🟢 10
-7. Retomar backlog 🟡 restante (CMS, decisión sobre imágenes en "Selected Writings")
-8. Confirmar con Eric los años de las cinco paradas sin fecha del Journey (Eugenio Garza-Sada, Shoshone Country, Jackson Hole, The Durangueño Project, Bio Park) y reubicarlas si hace falta
-9. Terminar la limpieza de contactos de Eric: revocar TrackApp.io, revisar los archivos de `Contactos/limpio/`, reimportar en Google Contacts e importar a Brevo — ver actualización del 11-12 de octubre, punto 6
+1. **Eric:** revisar el texto de la pantalla final del Journey ("You sailed all 26 stops with Nils…"), que redactó Claude.
+2. **Eric:** confirmar los años de las cinco paradas sin fecha (Eugenio Garza-Sada, Shoshone Country, Jackson Hole, The Durangueño Project y Bio Park) y de las cuatro que dicen "Present". Después, reubicarlas en el orden si hace falta.
+3. **Brevo:** revisar `Contactos/limpio/lista2_revisar.csv` e importar `brevo_lista2.csv` y `brevo_lista2_mano.csv` como listas aparte, sin mandar una campaña masiva de golpe. También queda pendiente la limpieza de la libreta de Eric: revocar TrackApp.io, revisar los archivos de `Contactos/limpio/` y reimportar a Google Contacts (ver la actualización del 11 al 12 de octubre, punto 6).
+4. Confirmar el email real de contacto y cargarlo como `VITE_AUTHOR_EMAIL` en Cloudflare Pages.
+5. Revocar el token de GitHub (`ghp_...`) que quedó expuesto en el chat del 22 al 23 de septiembre.
+6. Revisar quién tiene acceso al dashboard de Cloudflare, por el cambio de build command que nadie explicó (ver sección 7).
+7. Decidir qué hacer con la parada "Russian or Viking", que queda fuera del mapa (ver sección 5, punto 🟢 10).
+8. **Opcional, Journey:** juntar en un solo punto las paradas que comparten lugar (Duke y Birds Coughing; Shoshone y Medicine Man). También se podría hacer que la página recuerde en qué parada iba cada visitante.
+9. Retomar el backlog 🟡 que queda: el CMS y la decisión sobre las imágenes en "Selected Writings".
 
 ---
 
