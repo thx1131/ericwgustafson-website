@@ -27,6 +27,7 @@ const book = publications.find((p) => p.id === 'mexico-viking');
 
       <div class="journey-layout" data-journey>
         <div class="map-frame" aria-label="Illustrated map of Nils's journey">
+          <div class="map-stage" data-map-stage>
           <img
             class="journey-map"
             src="/images/journey/map-world.png"
@@ -54,14 +55,46 @@ const book = publications.find((p) => p.id === 'mexico-viking');
           >
             <img class="journey-ship__img" src="/images/journey/ship.png" alt="" width="987" height="1011" />
           </div>
+          </div>
           <span class="map-caption" aria-hidden="true">A journey across places and years</span>
+          <button class="map-camera-toggle" type="button" data-camera-toggle aria-pressed="false">Full route</button>
         </div>
 
-        <article class="stop-panel" aria-live="polite" aria-atomic="true">
-          <p class="stop-panel__eyebrow" data-stop-date>{firstStop.date ?? 'Date unknown'}</p>
-          <h2 data-stop-chapter>{firstStop.chapter}</h2>
-          <p class="stop-panel__place" data-stop-place>{firstStop.place}</p>
-          <p class="stop-panel__description" data-stop-description>{firstStop.description}</p>
+        <section class="journey-finale" data-finale hidden aria-labelledby="finale-title">
+          <img class="journey-finale__cover" src="/images/mexico-viking-cover.webp" alt="Mexico Viking book cover" loading="lazy" />
+          <div class="journey-finale__body">
+            <p class="stop-panel__eyebrow">Voyage complete</p>
+            <h2 id="finale-title" tabindex="-1">You sailed all {stops.length} stops with Nils</h2>
+            <p class="journey-finale__text">
+              From a ranch in Tamaulipas to Alaska, Iceland, and back home to Mexico. Each stop is only a glimpse — the full story is in <em>Mexico Viking</em>.
+            </p>
+            <div class="journey-finale__actions">
+              <BuyButtons amazon={book?.amazon} />
+            </div>
+            <button class="journey-finale__restart" type="button" data-restart>↺ Sail again from the start</button>
+          </div>
+        </section>
+
+        <article class="stop-panel">
+          <!-- Invisible copies of every stop share one grid cell with the live text,
+               so the panel always takes the height of the longest stop and the
+               controls below never shift. -->
+          <div class="stop-panel__content">
+            <div class="stop-panel__live" aria-live="polite" aria-atomic="true">
+              <p class="stop-panel__eyebrow" data-stop-date>{firstStop.date ?? 'Date unknown'}</p>
+              <h2 data-stop-chapter>{firstStop.chapter}</h2>
+              <p class="stop-panel__place" data-stop-place>{firstStop.place}</p>
+              <p class="stop-panel__description" data-stop-description>{firstStop.description}</p>
+            </div>
+            {stops.map((stop) => (
+              <div class="stop-panel__sizer" aria-hidden="true">
+                <p class="stop-panel__eyebrow">{stop.date ?? 'Date unknown'}</p>
+                <p class="stop-panel__sizer-title">{stop.chapter}</p>
+                <p class="stop-panel__place">{stop.place}</p>
+                <p class="stop-panel__description">{stop.description}</p>
+              </div>
+            ))}
+          </div>
           <div class="journey-controls" aria-label="Journey navigation">
             <span class="journey-progress" aria-hidden="true">
               <span class="journey-progress__fill" data-progress style={`width: ${100 / stops.length}%`}></span>
@@ -75,7 +108,7 @@ const book = publications.find((p) => p.id === 'mexico-viking');
               <span class="swipe-hint" data-swipe-hint aria-hidden="true">Swipe to sail</span>
             </span>
             <button class="control-button" type="button" data-next aria-label="Next stop">
-              <span class="control-button__label">Next</span>
+              <span class="control-button__label" data-next-label>Next</span>
               <span class="control-button__arrow" aria-hidden="true">→</span>
             </button>
           </div>
@@ -141,8 +174,60 @@ const book = publications.find((p) => p.id === 'mexico-viking');
     const progress = root.querySelector('[data-progress]');
     const swipeHint = root.querySelector('[data-swipe-hint]');
     const timeline = document.querySelector('.timeline');
+    const stage = root.querySelector('[data-map-stage]');
+    const cameraToggle = root.querySelector('[data-camera-toggle]');
+    const finale = root.querySelector('[data-finale]');
+    const finaleTitle = finale.querySelector('h2');
+    const nextLabel = root.querySelector('[data-next-label]');
+    const nextArrow = next.querySelector('.control-button__arrow');
+    const stackedLayout = window.matchMedia('(max-width: 1080px)');
+    const phoneLayout = window.matchMedia('(max-width: 680px)');
     let activeIndex = 0;
     let panelTimer;
+    let overview = false;
+
+    // Camera: on stacked layouts the map zooms in and follows the ship.
+    function cameraScale() {
+      if (overview || !stackedLayout.matches) return 1;
+      return phoneLayout.matches ? 2.2 : 1.7;
+    }
+
+    function updateCamera() {
+      const button = stops[activeIndex];
+      const scale = cameraScale();
+      // A little slack past the map edges keeps stops near the border (Alaska) fully framed.
+      const slack = scale === 1 ? 0 : 0.12;
+      const clamp = (value) => Math.min(slack, Math.max(1 - scale - slack, value));
+      const tx = clamp(0.5 - (Number(button.dataset.x) / 100) * scale) * 100;
+      const ty = clamp(0.5 - (Number(button.dataset.y) / 100) * scale) * 100;
+      stage.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`;
+      // Shrink the ship against the zoom so it grows only slightly on screen.
+      stage.style.setProperty('--ship-factor', scale === 1 ? 1 : 1.4 / scale);
+      cameraToggle.hidden = !stackedLayout.matches;
+      cameraToggle.textContent = overview ? 'Follow the ship' : 'Full route';
+      cameraToggle.setAttribute('aria-pressed', String(overview));
+    }
+
+    function showFinale(show) {
+      finale.hidden = !show;
+      panel.hidden = show;
+      root.classList.toggle('is-finished', show);
+      overview = show;
+      updateCamera();
+      if (show) {
+        updateTrail(stops.length - 1);
+        trailDots.forEach((dot) => dot.classList.remove('is-current'));
+        finaleTitle.focus({ preventScroll: true });
+        bringStageIntoView();
+      }
+    }
+
+    function updateNextButton() {
+      const isLast = activeIndex === stops.length - 1;
+      nextLabel.textContent = isLast ? 'Finish' : 'Next';
+      nextArrow.textContent = isLast ? '⚑' : '→';
+      next.setAttribute('aria-label', isLast ? 'Finish the voyage' : 'Next stop');
+    }
 
     function updateTrail(index) {
       const points = stops
@@ -173,7 +258,23 @@ const book = publications.find((p) => p.id === 'mexico-viking');
       timeline.scrollTo({ left, behavior: 'smooth' });
     }
 
+    // Relative moves: stepping past the last stop opens the finale,
+    // stepping back from the finale returns to the last stop.
+    function step(delta) {
+      if (!finale.hidden) {
+        if (delta < 0) activate(activeIndex);
+        return;
+      }
+      if (delta > 0 && activeIndex === stops.length - 1) {
+        showFinale(true);
+        return;
+      }
+      activate(activeIndex + delta);
+    }
+
     function activate(index) {
+      if (!finale.hidden) showFinale(false);
+
       const boundedIndex = Math.max(0, Math.min(index, stops.length - 1));
       const button = stops[boundedIndex];
       const previousButton = stops[activeIndex];
@@ -189,6 +290,9 @@ const book = publications.find((p) => p.id === 'mexico-viking');
         button.dataset.y === previousButton.dataset.y;
 
       activeIndex = boundedIndex;
+      overview = false;
+      updateCamera();
+      updateNextButton();
       ship.style.left = `${button.dataset.x}%`;
       ship.style.top = `${button.dataset.y}%`;
       if (samePlace) replayClass(ship, 'is-hopping');
@@ -216,7 +320,6 @@ const book = publications.find((p) => p.id === 'mexico-viking');
 
     // On stacked layouts, frame the map and story together like a game camera,
     // so the ship's move is visible after each step.
-    const stackedLayout = window.matchMedia('(max-width: 1080px)');
     function bringStageIntoView() {
       if (!stackedLayout.matches) return;
       const mapTop = mapFrame.getBoundingClientRect().top;
@@ -244,7 +347,7 @@ const book = publications.find((p) => p.id === 'mexico-viking');
         const dy = event.changedTouches[0].clientY - startY;
         if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
         swipeHint?.classList.add('is-hidden');
-        activate(activeIndex + (dx < 0 ? 1 : -1));
+        step(dx < 0 ? 1 : -1);
       }, { passive: true });
     }
 
@@ -260,18 +363,28 @@ const book = publications.find((p) => p.id === 'mexico-viking');
 
     updateTrail(0);
     stops[0]?.classList.add('is-visited');
+    updateCamera();
+    stackedLayout.addEventListener('change', updateCamera);
+    phoneLayout.addEventListener('change', updateCamera);
+
+    cameraToggle.addEventListener('click', () => {
+      overview = !overview;
+      updateCamera();
+    });
+
+    finale.querySelector('[data-restart]').addEventListener('click', () => activate(0));
 
     stops.forEach((button) => {
       button.addEventListener('click', () => activate(Number(button.dataset.stopIndex)));
     });
 
-    previous.addEventListener('click', () => activate(activeIndex - 1));
-    next.addEventListener('click', () => activate(activeIndex + 1));
+    previous.addEventListener('click', () => step(-1));
+    next.addEventListener('click', () => step(1));
 
     document.addEventListener('keydown', (event) => {
       if (event.altKey || event.ctrlKey || event.metaKey) return;
-      if (event.key === 'ArrowLeft') activate(activeIndex - 1);
-      if (event.key === 'ArrowRight') activate(activeIndex + 1);
+      if (event.key === 'ArrowLeft') step(-1);
+      if (event.key === 'ArrowRight') step(1);
     });
   }
 </script>
@@ -357,10 +470,99 @@ const book = publications.find((p) => p.id === 'mexico-viking');
     background: var(--color-bg);
   }
 
+  .map-stage {
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 0;
+    transition: transform 1.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
   .journey-map {
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+
+  .map-camera-toggle {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    z-index: 3;
+    min-height: 36px;
+    padding: 0 var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+    font: 500 0.8rem var(--font-body);
+    cursor: pointer;
+  }
+
+  .map-camera-toggle[hidden] {
+    display: none;
+  }
+
+  .map-camera-toggle:focus-visible {
+    outline: 2px solid var(--color-accent-soft);
+    outline-offset: 2px;
+  }
+
+  .journey-finale:not([hidden]) {
+    display: grid;
+    grid-template-columns: minmax(96px, 160px) 1fr;
+    align-items: start;
+    gap: var(--space-lg);
+    padding: var(--space-xl) 0;
+    animation: journey-finale-in 0.5s ease both;
+  }
+
+  @keyframes journey-finale-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  .journey-finale__cover {
+    width: 100%;
+    height: auto;
+    box-shadow: 0 10px 24px rgba(26, 26, 24, 0.18);
+  }
+
+  .journey-finale h2 {
+    margin-bottom: var(--space-sm);
+    font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  }
+
+  .journey-finale h2:focus {
+    outline: none;
+  }
+
+  .journey-finale__text {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+
+  .journey-finale__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin: var(--space-lg) 0 var(--space-md);
+  }
+
+  .journey-finale__restart {
+    min-height: 44px;
+    border: 0;
+    padding: 0;
+    color: var(--color-accent);
+    background: transparent;
+    font: 500 0.95rem var(--font-body);
+    cursor: pointer;
+  }
+
+  .journey-finale__restart:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 
   .journey-trail {
@@ -412,9 +614,12 @@ const book = publications.find((p) => p.id === 'mexico-viking');
   .journey-ship {
     position: absolute;
     z-index: 2;
-    width: clamp(42px, 8.5%, 100px);
+    width: calc(clamp(42px, 8.5%, 100px) * var(--ship-factor, 1));
     transform: translate(-50%, -55%);
-    transition: left 1.25s cubic-bezier(0.2, 0.7, 0.2, 1), top 1.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition:
+      left 1.25s cubic-bezier(0.2, 0.7, 0.2, 1),
+      top 1.25s cubic-bezier(0.2, 0.7, 0.2, 1),
+      width 1.25s cubic-bezier(0.2, 0.7, 0.2, 1);
     pointer-events: none;
   }
 
@@ -467,16 +672,43 @@ const book = publications.find((p) => p.id === 'mexico-viking');
   .stop-panel {
     min-width: 0;
     padding: var(--space-xl) 0;
-    transition: opacity 0.18s ease, transform 0.18s ease;
     touch-action: pan-y;
   }
 
-  .stop-panel.is-changing {
+  .stop-panel__content {
+    display: grid;
+  }
+
+  .stop-panel__live,
+  .stop-panel__sizer {
+    grid-area: 1 / 1;
+    min-width: 0;
+  }
+
+  .stop-panel__sizer {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* Mirrors the live h2 so the sizer measures the same height. */
+  .stop-panel__sizer-title {
+    margin: 0 0 var(--space-sm);
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 1.25;
+  }
+
+  .stop-panel__live {
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .stop-panel.is-changing .stop-panel__live {
     opacity: 0;
     transform: translateX(-12px);
   }
 
-  .stop-panel.is-changing[data-direction='back'] {
+  .stop-panel.is-changing[data-direction='back'] .stop-panel__live {
     transform: translateX(12px);
   }
 
@@ -753,9 +985,10 @@ const book = publications.find((p) => p.id === 'mexico-viking');
       padding: var(--space-md) var(--space-md) calc(84px + env(safe-area-inset-bottom, 0px));
     }
 
-    /* Keep the docked bar in place regardless of description length. */
-    .stop-panel__description {
-      min-height: calc(1.8em * 5);
+    .journey-finale:not([hidden]) {
+      grid-template-columns: 96px 1fr;
+      gap: var(--space-md);
+      padding: var(--space-lg) var(--space-md) var(--space-xl);
     }
 
     .journey-controls .control-button {
@@ -805,7 +1038,12 @@ const book = publications.find((p) => p.id === 'mexico-viking');
       transition-duration: 0.01ms;
     }
 
+    .map-stage {
+      transition-duration: 0.01ms;
+    }
+
     .journey-ship__img,
+    .journey-finale:not([hidden]),
     .journey-ship.is-hopping,
     .journey-controls.is-bumping {
       animation: none;
