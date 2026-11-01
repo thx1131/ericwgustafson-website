@@ -9,6 +9,16 @@ const stops = [...journey].sort((a, b) => a.order - b.order);
 const firstStop = stops[0];
 const firstPosition = positions[firstStop.id];
 const book = publications.find((p) => p.id === 'mexico-viking');
+
+// Stops this close together on the map share one tappable marker.
+const CLUSTER_DISTANCE = 1.5;
+const markers = [];
+stops.forEach((stop, index) => {
+  const { x, y } = positions[stop.id];
+  const marker = markers.find((m) => Math.hypot(m.x - x, m.y - y) < CLUSTER_DISTANCE);
+  if (marker) marker.indices.push(index);
+  else markers.push({ x, y, indices: [index] });
+});
 ---
 
 <Layout
@@ -36,8 +46,15 @@ const book = publications.find((p) => p.id === 'mexico-viking');
             height="2048"
           />
           <svg class="journey-trail" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
-            <path class="journey-trail__halo" data-trail-halo></path>
-            <path class="journey-trail__path" data-trail></path>
+            <defs>
+              <mask id="trail-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="200">
+                <path class="journey-trail__reveal" data-trail-reveal></path>
+              </mask>
+            </defs>
+            <g mask="url(#trail-reveal)">
+              <path class="journey-trail__halo" data-trail-halo></path>
+              <path class="journey-trail__path" data-trail></path>
+            </g>
             {stops.map((stop, index) => (
               <circle
                 class="journey-trail__dot"
@@ -55,7 +72,19 @@ const book = publications.find((p) => p.id === 'mexico-viking');
           >
             <img class="journey-ship__img" src="/images/journey/ship.png" alt="" width="987" height="1011" />
           </div>
+          {markers.map((marker) => (
+            <button
+              class="map-marker"
+              type="button"
+              tabindex="-1"
+              aria-hidden="true"
+              data-marker={marker.indices.join(',')}
+              style={`left: ${marker.x}%; top: ${marker.y}%`}
+              title={marker.indices.map((i) => stops[i].chapter).join(' · ')}
+            ></button>
+          ))}
           </div>
+          <div class="map-popover" data-map-popover hidden></div>
           <span class="map-caption" aria-hidden="true">A journey across places and years</span>
           <button class="map-camera-toggle" type="button" data-camera-toggle aria-pressed="false">Full route</button>
         </div>
@@ -168,7 +197,11 @@ const book = publications.find((p) => p.id === 'mexico-viking');
     const next = root.querySelector('[data-next]');
     const trailPath = root.querySelector('[data-trail]');
     const trailHalo = root.querySelector('[data-trail-halo]');
+    const trailReveal = root.querySelector('[data-trail-reveal]');
     const trailDots = [...root.querySelectorAll('.journey-trail__dot')];
+    const markers = [...root.querySelectorAll('[data-marker]')];
+    const popover = root.querySelector('[data-map-popover]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const mapFrame = root.querySelector('.map-frame');
     const controls = root.querySelector('.journey-controls');
     const progress = root.querySelector('[data-progress]');
@@ -203,6 +236,7 @@ const book = publications.find((p) => p.id === 'mexico-viking');
       stage.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`;
       // Shrink the ship against the zoom so it grows only slightly on screen.
       stage.style.setProperty('--ship-factor', scale === 1 ? 1 : 1.4 / scale);
+      stage.style.setProperty('--camera-scale', scale);
       cameraToggle.hidden = !stackedLayout.matches;
       cameraToggle.textContent = overview ? 'Follow the ship' : 'Full route';
       cameraToggle.setAttribute('aria-pressed', String(overview));
@@ -229,13 +263,28 @@ const book = publications.find((p) => p.id === 'mexico-viking');
       next.setAttribute('aria-label', isLast ? 'Finish the voyage' : 'Next stop');
     }
 
-    function updateTrail(index) {
+    // Draws the dashed trail up to `index`. When moving forward, the new leg is
+    // revealed through a mask in step with the ship's sailing animation.
+    function updateTrail(index, fromIndex = index) {
       const points = stops
         .slice(0, index + 1)
-        .map((item) => `${(Number(item.dataset.x) / 100) * 300},${(Number(item.dataset.y) / 100) * 200}`);
-      const d = points.length > 1 ? `M${points.join(' L')}` : '';
+        .map((item) => [(Number(item.dataset.x) / 100) * 300, (Number(item.dataset.y) / 100) * 200]);
+      const d = points.length > 1 ? `M${points.map((p) => p.join(',')).join(' L')}` : '';
+      const lengths = points.map((p, i) => (i ? Math.hypot(p[0] - points[i - 1][0], p[1] - points[i - 1][1]) : 0));
+      const total = lengths.reduce((sum, length) => sum + length, 0);
+      const drawn = lengths.slice(0, Math.min(fromIndex, index) + 1).reduce((sum, length) => sum + length, 0);
+
       trailPath.setAttribute('d', d);
       trailHalo.setAttribute('d', d);
+      trailReveal.setAttribute('d', d);
+      trailReveal.style.strokeDasharray = `${total + 1} ${total + 1}`;
+      trailReveal.style.transition = 'none';
+      trailReveal.style.strokeDashoffset = String(total - drawn);
+      if (total > drawn && !reducedMotion.matches) {
+        void getComputedStyle(trailReveal).strokeDashoffset;
+        trailReveal.style.transition = '';
+      }
+      trailReveal.style.strokeDashoffset = '0';
 
       trailDots.forEach((dot, dotIndex) => {
         dot.classList.toggle('is-visited', dotIndex <= index);
@@ -289,14 +338,17 @@ const book = publications.find((p) => p.id === 'mexico-viking');
         button.dataset.x === previousButton.dataset.x &&
         button.dataset.y === previousButton.dataset.y;
 
+      const fromIndex = activeIndex;
       activeIndex = boundedIndex;
       overview = false;
+      closePopover();
       updateCamera();
       updateNextButton();
       ship.style.left = `${button.dataset.x}%`;
       ship.style.top = `${button.dataset.y}%`;
       if (samePlace) replayClass(ship, 'is-hopping');
-      updateTrail(boundedIndex);
+      // Only a single step forward is drawn leg by leg; jumps redraw instantly.
+      updateTrail(boundedIndex, boundedIndex === fromIndex + 1 ? fromIndex : boundedIndex);
       progress.style.width = `${((boundedIndex + 1) / stops.length) * 100}%`;
 
       panel.classList.add('is-changing');
@@ -354,6 +406,71 @@ const book = publications.find((p) => p.id === 'mexico-viking');
     enableSwipe(mapFrame);
     enableSwipe(panel);
 
+    // Map markers: a single stop sails there; a cluster opens a small chooser.
+    function closePopover() {
+      popover.hidden = true;
+      popover.replaceChildren();
+    }
+
+    function openPopover(marker, indices) {
+      popover.replaceChildren(
+        ...indices.map((index) => {
+          const option = document.createElement('button');
+          option.type = 'button';
+          option.className = 'map-popover__option';
+          option.classList.toggle('is-current', index === activeIndex);
+          const number = document.createElement('span');
+          number.className = 'map-popover__number';
+          number.textContent = String(index + 1).padStart(2, '0');
+          option.append(number, stops[index].dataset.chapter);
+          option.addEventListener('click', () => activate(index));
+          return option;
+        }),
+      );
+      popover.hidden = false;
+
+      const frameRect = mapFrame.getBoundingClientRect();
+      const markerRect = marker.getBoundingClientRect();
+      const centerX = markerRect.left + markerRect.width / 2 - frameRect.left;
+      const centerY = markerRect.top + markerRect.height / 2 - frameRect.top;
+      const left = Math.min(Math.max(8, centerX - popover.offsetWidth / 2), frameRect.width - popover.offsetWidth - 8);
+      const below = centerY + 24 + popover.offsetHeight < frameRect.height;
+      const top = below ? centerY + 24 : Math.max(8, centerY - 24 - popover.offsetHeight);
+      popover.style.left = `${left}px`;
+      popover.style.top = `${top}px`;
+      popover.querySelector('button')?.focus({ preventScroll: true });
+    }
+
+    // Touch targets can overlap when the map is zoomed out, so a tap gathers
+    // every stop whose marker lies under the finger.
+    function stopsUnderPoint(x, y) {
+      return markers
+        .filter((marker) => {
+          const rect = marker.getBoundingClientRect();
+          return Math.hypot(rect.left + rect.width / 2 - x, rect.top + rect.height / 2 - y) <= rect.width / 2;
+        })
+        .flatMap((marker) => marker.dataset.marker.split(',').map(Number))
+        .sort((a, b) => a - b);
+    }
+
+    markers.forEach((marker) => {
+      marker.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (!finale.hidden) showFinale(false);
+        const hits = stopsUnderPoint(event.clientX, event.clientY);
+        const indices = hits.length ? hits : marker.dataset.marker.split(',').map(Number);
+        if (indices.length === 1) activate(indices[0]);
+        else openPopover(marker, indices);
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!popover.hidden && !popover.contains(event.target)) closePopover();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closePopover();
+    });
+
     // The docked mobile bar only shows while the map and story are on screen.
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(([entry]) => {
@@ -368,6 +485,7 @@ const book = publications.find((p) => p.id === 'mexico-viking');
     phoneLayout.addEventListener('change', updateCamera);
 
     cameraToggle.addEventListener('click', () => {
+      closePopover();
       overview = !overview;
       updateCamera();
     });
@@ -590,6 +708,87 @@ const book = publications.find((p) => p.id === 'mexico-viking');
     stroke-linecap: round;
     stroke-dasharray: 2.4 2.8;
     opacity: 1;
+  }
+
+  .journey-trail__reveal {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke-dashoffset 1.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .map-marker {
+    position: absolute;
+    z-index: 3;
+    /* Keep a ~40px touch target on screen whatever the camera zoom. */
+    width: calc(40px / var(--camera-scale, 1));
+    height: calc(40px / var(--camera-scale, 1));
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    background: transparent;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .map-marker:hover {
+    background: color-mix(in srgb, var(--color-accent-soft) 18%, transparent);
+  }
+
+  .map-popover {
+    position: absolute;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    max-width: min(260px, calc(100% - 16px));
+    max-height: calc(100% - 16px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg);
+    box-shadow: 0 8px 24px rgba(26, 26, 24, 0.16);
+  }
+
+  .map-popover[hidden] {
+    display: none;
+  }
+
+  .map-popover :global(.map-popover__option) {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 6px;
+    color: var(--color-accent);
+    background: transparent;
+    font: 400 0.95rem var(--font-heading);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .map-popover :global(.map-popover__option:hover),
+  .map-popover :global(.map-popover__option:focus-visible) {
+    background: var(--color-bg-muted);
+    outline: none;
+  }
+
+  .map-popover :global(.map-popover__option.is-current) {
+    background: var(--color-bg-muted);
+    font-weight: 600;
+  }
+
+  .map-popover :global(.map-popover__number) {
+    color: var(--color-accent-soft);
+    font: 500 0.75rem var(--font-body);
+    font-variant-numeric: tabular-nums;
   }
 
   .journey-trail__dot {
