@@ -54,6 +54,14 @@
 >    - `lista2_revisar.csv`: 40 casos dudosos, entre ellos una lectura ambigua de la letra de Eric y tres correos escritos a mano que no aparecen en la libreta. Los detalles están en el archivo, no en este documento, porque el repo es público.
 >    - Ninguna lista se ha importado todavía a Brevo.
 > 5. **Carpetas sin rastrear que no deben subirse al repo:** `Assets_interactivos/`, `Publicacion/`, `INVESTIGAR_SECRETO_EXPUESTO.md`, `journey.json` y `journey (1).json` (estos dos están en la raíz y no son el `src/data/journey.json` que usa el sitio). Al hacer commit, agregar solo los archivos concretos, nunca `git add -A`.
+
+> **Actualización del 1 de noviembre — mapa nuevo del Journey que llega hasta Rusia:**
+> 1. **Mapa nuevo** (`public/images/journey/map-world.webp`, 4096×2048, ahora en `.webp`: pasó de 12.7 MB a 1.9 MB). Lo generó Codex desde cero con el mismo estilo de lápiz de color. Europa ahora sigue hacia el este hasta los Urales, con el Mar Negro, el Cáucaso, el Volga y el Caspio. La parada "Russian or Viking" ya está en su lugar real, el delta del Volga (Astrakhan). Las versiones están en `Assets_interactivos/`: `mapa-mundial-v1.png` es el mapa anterior; v2 y v3 fueron intentos fallidos de solo extenderlo (quedaba un corte visible); v4 es el que se usa. **Lección:** pedirle a Codex que "extienda" una imagen no funciona, porque pega un pedazo aparte. Funcionó pedirle el mapa completo de nuevo.
+> 2. **Las 26 paradas se reubicaron** en `journeyPositions.json` sobre el mapa nuevo, revisadas una por una con una cuadrícula. **Ya no hay dos paradas en el mismo punto**: las que comparten lugar (Duke y Birds Coughing; Shoshone y Medicine Man; las cinco de Monterrey) se separaron un poco a propósito. Es licencia artística para que el barco siempre se mueva.
+> 3. **El orden sigue siendo cronológico** (`journey.json` no cambió). Se probó un orden por regiones y Luis lo descartó: no quiere un recorrido lineal.
+> 4. **Tramos curvos:** cada tramo de la ruta se dibuja como un arco hacia arriba (como ruta de barco o avión) y el barco navega siguiendo esa curva al avanzar o retroceder una parada. Si se brinca a una parada lejana, el barco va en línea recta. La curvatura se ajusta con `LEG_BOW` en `journey.astro`.
+> 5. **El mapa ahora es 2:1** (antes 3:2), también en celular, para que los puntos coincidan con la imagen. En celular el mapa se ve más bajito, pero la cámara sigue haciendo zoom sobre el barco.
+> 6. **Pendiente para Eric:** el texto de la pantalla final dice "From a ranch in Tamaulipas to Alaska, Iceland, and back home to Mexico" y no menciona Rusia.
 ---
 
 ## 1. Contexto
@@ -152,7 +160,7 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 | `Biografia.webp` | Foto profesional de Eric (retrato, 937×1136) | ✅ **Subida, conectada en `bio.astro` y en vivo** desde el 23 de septiembre. |
 | Edición en español de *A Story of Success in Rural Mexico* ("Una Historia de Éxito en el México Rural") | Portada en español, mismo libro que la ficha en inglés | ✅ **Ficha nueva creada** el 2026-09-05: `success-story-rural-mexico-es` en `publications.json`, con su propia portada y descripción en español |
 | `journey.json` (26 paradas) + `journeyPositions.json` | Datos del timeline interactivo "The Voyages of Nils": capítulo, lugar, fecha, descripción y coordenadas x/y sobre el mapa de cada parada | ✅ **Página completa construida el 22 de septiembre (`src/pages/journey.astro`), en vivo desde el 23.** |
-| `map-world.png` + `ship.png` | Mapa ilustrado (mano alzada) del recorrido + barco vikingo, para la sección "The Voyages of Nils" | ✅ **En `public/images/journey/`, en vivo desde el 23 de septiembre.** |
+| `map-world.webp` + `ship.png` | Mapa ilustrado (mano alzada) del recorrido + barco vikingo, para la sección "The Voyages of Nils" | ✅ **En `public/images/journey/`.** El mapa se reemplazó el 1 de noviembre por uno que llega hasta Rusia (antes era `map-world.png`). |
 
 ---
 
@@ -193,9 +201,9 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 - ~~Eliminar el GitHub Action de deploy redundante~~ — hecho el 2026-10-31
 
 ### 🟢 Futuro / fase 2
-10. ~~Mapa interactivo de los viajes de Nils~~ — **construido el 22 de septiembre** (`/journey`, "The Voyages of Nils"), ver sección 3.1. Queda como pendiente real, no de construcción sino de despliegue (🔴 punto 1) y una decisión de diseño: la parada "Russian or Viking" (Astrakhan) cae fuera del área que dibuja el mapa ilustrado — falta decidir si se extiende el mapa hacia el este o se deja como aproximación artística.
+10. ~~Mapa interactivo de los viajes de Nils~~ — **construido el 22 de septiembre** (`/journey`, "The Voyages of Nils"), ver sección 3.1. El 1 de noviembre se cambió por un mapa que llega hasta Rusia, y "Russian or Viking" (Astrakhan) ya está en su lugar real.
 11. Posible ampliación de página "Selected Writings" con más detalle por publicación si Eric quiere
-12. Si se decide extender el mapa de "The Voyages of Nils" hacia el este (ver punto 10), habrá que regenerar `map-world.png` con el mismo estilo (dibujo a mano + IA) y reposicionar las coordenadas afectadas en `journeyPositions.json`
+12. ~~Extender el mapa de "The Voyages of Nils" hacia el este~~ — hecho el 2026-11-01
 
 ### ⚠️ Fuera del sitio, pero relacionado (nivel libro/KDP)
 13. **Conflicto sin resolver: subtítulo "Memoir" vs. clasificación de ficción en KDP.** El subtítulo formal de portada dice *"A Viking's Memoir on Mexico's Environmental Challenges"*, pero el libro se clasifica como ficción en KDP porque Eric no quiere ser identificado públicamente con el protagonista (Nils). Este subtítulo ya se usó en `publications.json` tal cual viene en portada — si se resuelve el conflicto a nivel de portada/KDP, hay que actualizar también el sitio (un solo campo en `publications.json`, cambio menor)
@@ -246,15 +254,14 @@ Esta sección estaba desactualizada casi por completo: casi todo lo que decía "
 
 *(Actualizado el 31 de octubre: el dominio raíz y el Action ya están resueltos y salieron de la lista.)*
 
-1. **Eric:** revisar el texto de la pantalla final del Journey ("You sailed all 26 stops with Nils…"), que redactó Claude.
+1. **Eric:** revisar el texto de la pantalla final del Journey ("You sailed all 26 stops with Nils…"), que redactó Claude. Hoy no menciona Rusia. Mostrarle también el mapa nuevo.
 2. **Eric:** confirmar los años de las cinco paradas sin fecha (Eugenio Garza-Sada, Shoshone Country, Jackson Hole, The Durangueño Project y Bio Park) y de las cuatro que dicen "Present". Después, reubicarlas en el orden si hace falta.
-3. **Brevo:** revisar `Contactos/limpio/lista2_revisar.csv` e importar `brevo_lista2.csv` y `brevo_lista2_mano.csv` como listas aparte, sin mandar una campaña masiva de golpe. También queda pendiente la limpieza de la libreta de Eric: revocar TrackApp.io, revisar los archivos de `Contactos/limpio/` y reimportar a Google Contacts (ver la actualización del 11 al 12 de octubre, punto 6).
+3. **Brevo:** revisar `Contactos/limpio/lista2_revisar.csv` e importar las listas. Como Brevo solo permite 300 envíos por día, el 1 de noviembre se juntaron `brevo_lista2.csv` y `brevo_lista2_mano.csv` (sin duplicados: 417 correos) y se partieron en `brevo_lista2_parte1.csv` (209) y `brevo_lista2_parte2.csv` (208), para mandar una parte cada día. También queda pendiente la limpieza de la libreta de Eric: revocar TrackApp.io, revisar los archivos de `Contactos/limpio/` y reimportar a Google Contacts (ver la actualización del 11 al 12 de octubre, punto 6).
 4. Confirmar el email real de contacto y cargarlo como `VITE_AUTHOR_EMAIL` en Cloudflare Pages.
 5. Revocar el token de GitHub (`ghp_...`) que quedó expuesto en el chat del 22 al 23 de septiembre.
 6. Revisar quién tiene acceso al dashboard de Cloudflare, por el cambio de build command que nadie explicó (ver sección 7).
-7. Decidir qué hacer con la parada "Russian or Viking", que queda fuera del mapa (ver sección 5, punto 🟢 10).
-8. **Opcional, Journey:** juntar en un solo punto las paradas que comparten lugar (Duke y Birds Coughing; Shoshone y Medicine Man). También se podría hacer que la página recuerde en qué parada iba cada visitante.
-9. Retomar el backlog 🟡 que queda: el CMS y la decisión sobre las imágenes en "Selected Writings".
+7. **Opcional, Journey:** hacer que la página recuerde en qué parada iba cada visitante.
+8. Retomar el backlog 🟡 que queda: el CMS y la decisión sobre las imágenes en "Selected Writings".
 
 ---
 

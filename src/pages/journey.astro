@@ -23,7 +23,7 @@ stops.forEach((stop, index) => {
 
 <Layout
   title="The Voyages of Nils — Eric Gustafson"
-  description="Follow Nils's journey through Mexico, the United States, Alaska, and northern Europe in Mexico Viking."
+  description="Follow Nils's journey through Mexico, the United States, Alaska, Europe, and Russia in Mexico Viking."
 >
   <section class="section journey-page">
     <div class="container">
@@ -40,14 +40,14 @@ stops.forEach((stop, index) => {
           <div class="map-stage" data-map-stage>
           <img
             class="journey-map"
-            src="/images/journey/map-world.png"
-            alt="Illustrated map showing Mexico and the United States on the left, northern Europe on the right, and Alaska in a separate inset."
-            width="3072"
+            src="/images/journey/map-world.webp"
+            alt="Illustrated map showing Mexico and the United States on the left, Europe and western Russia on the right, and Alaska in a separate inset."
+            width="4096"
             height="2048"
           />
-          <svg class="journey-trail" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+          <svg class="journey-trail" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
             <defs>
-              <mask id="trail-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="200">
+              <mask id="trail-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="200">
                 <path class="journey-trail__reveal" data-trail-reveal></path>
               </mask>
             </defs>
@@ -59,7 +59,7 @@ stops.forEach((stop, index) => {
               <circle
                 class="journey-trail__dot"
                 data-dot-index={index}
-                cx={(positions[stop.id].x / 100) * 300}
+                cx={(positions[stop.id].x / 100) * 400}
                 cy={(positions[stop.id].y / 100) * 200}
                 r="2.6"
               />
@@ -263,14 +263,67 @@ stops.forEach((stop, index) => {
       next.setAttribute('aria-label', isLast ? 'Finish the voyage' : 'Next stop');
     }
 
+    // Stop position in trail (viewBox) units.
+    const point = (item) => [(Number(item.dataset.x) / 100) * 400, (Number(item.dataset.y) / 100) * 200];
+
+    // Each leg is a quadratic curve bowed upward, like a sea or flight route.
+    const LEG_BOW = 0.25;
+    function legControl([x0, y0], [x1, y1]) {
+      let nx = y0 - y1;
+      let ny = x1 - x0;
+      if (ny > 0 || (ny === 0 && nx > 0)) {
+        nx = -nx;
+        ny = -ny;
+      }
+      return [(x0 + x1) / 2 + nx * LEG_BOW, (y0 + y1) / 2 + ny * LEG_BOW];
+    }
+
+    function legPoint(p0, c, p1, t) {
+      const u = 1 - t;
+      return [u * u * p0[0] + 2 * u * t * c[0] + t * t * p1[0], u * u * p0[1] + 2 * u * t * c[1] + t * t * p1[1]];
+    }
+
+    function legLength(p0, p1) {
+      const c = legControl(p0, p1);
+      let length = 0;
+      let last = p0;
+      for (let i = 1; i <= 24; i += 1) {
+        const next = legPoint(p0, c, p1, i / 24);
+        length += Math.hypot(next[0] - last[0], next[1] - last[1]);
+        last = next;
+      }
+      return length;
+    }
+
+    // Moves the ship to stop `toIndex`. A single step sails along the curved leg;
+    // jumps glide straight there through the CSS transition.
+    let shipAnimation;
+    function sailShip(fromIndex, toIndex) {
+      const target = stops[toIndex];
+      ship.style.left = `${target.dataset.x}%`;
+      ship.style.top = `${target.dataset.y}%`;
+      shipAnimation?.cancel();
+      if (Math.abs(toIndex - fromIndex) !== 1 || reducedMotion.matches || !ship.animate) return;
+
+      const p0 = point(stops[Math.min(fromIndex, toIndex)]);
+      const p1 = point(stops[Math.max(fromIndex, toIndex)]);
+      const c = legControl(p0, p1);
+      const frames = Array.from({ length: 25 }, (_, i) => {
+        const t = toIndex > fromIndex ? i / 24 : 1 - i / 24;
+        const [x, y] = legPoint(p0, c, p1, t);
+        return { left: `${x / 4}%`, top: `${y / 2}%` };
+      });
+      shipAnimation = ship.animate(frames, { duration: 1250, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' });
+    }
+
     // Draws the dashed trail up to `index`. When moving forward, the new leg is
     // revealed through a mask in step with the ship's sailing animation.
     function updateTrail(index, fromIndex = index) {
-      const points = stops
-        .slice(0, index + 1)
-        .map((item) => [(Number(item.dataset.x) / 100) * 300, (Number(item.dataset.y) / 100) * 200]);
-      const d = points.length > 1 ? `M${points.map((p) => p.join(',')).join(' L')}` : '';
-      const lengths = points.map((p, i) => (i ? Math.hypot(p[0] - points[i - 1][0], p[1] - points[i - 1][1]) : 0));
+      const points = stops.slice(0, index + 1).map(point);
+      const d = points.length > 1
+        ? `M${points[0].join(',')}` + points.slice(1).map((p, i) => ` Q${legControl(points[i], p).join(',')} ${p.join(',')}`).join('')
+        : '';
+      const lengths = points.map((p, i) => (i ? legLength(points[i - 1], p) : 0));
       const total = lengths.reduce((sum, length) => sum + length, 0);
       const drawn = lengths.slice(0, Math.min(fromIndex, index) + 1).reduce((sum, length) => sum + length, 0);
 
@@ -344,8 +397,7 @@ stops.forEach((stop, index) => {
       closePopover();
       updateCamera();
       updateNextButton();
-      ship.style.left = `${button.dataset.x}%`;
-      ship.style.top = `${button.dataset.y}%`;
+      sailShip(fromIndex, boundedIndex);
       if (samePlace) replayClass(ship, 'is-hopping');
       // Only a single step forward is drawn leg by leg; jumps redraw instantly.
       updateTrail(boundedIndex, boundedIndex === fromIndex + 1 ? fromIndex : boundedIndex);
@@ -583,7 +635,7 @@ stops.forEach((stop, index) => {
   .map-frame {
     position: relative;
     width: 100%;
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 2 / 1;
     overflow: hidden;
     background: var(--color-bg);
   }
@@ -1097,7 +1149,7 @@ stops.forEach((stop, index) => {
     }
 
     .map-frame {
-      aspect-ratio: 3 / 2.15;
+      aspect-ratio: 2 / 1;
     }
 
     .stop-panel {
